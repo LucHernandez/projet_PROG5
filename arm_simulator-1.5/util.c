@@ -36,7 +36,7 @@ int is_big_endian() {
     return ((*(uint8_t *) & one) == 0);
 }
 
-int convertion_bits_decimal(uint32_t val){
+int conversion_bits_decimal(uint32_t val){
 	int somme = 0;
 	int puissance = 1;
 	for(int i = 0; i<32; i++){
