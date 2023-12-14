@@ -48,16 +48,16 @@ void memory_destroy(memory mem) {
 int memory_read_byte(memory mem, uint32_t address, uint8_t *value) {
     unsigned int addr = conversion_bits_decimal(address);
     if ( addr > mem->size - sizeof(uint8_t) ) {
-        return 0;
+        return -1;
     }
     *value = mem->tab[addr];
-    return 1;
+    return 0;
 }
 
 int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) {
     unsigned int addr = conversion_bits_decimal(address);
     if ( addr > (mem->size) - sizeof(uint16_t) ) {
-        return 0;
+        return -1;
     }
     uint16_t val;
     for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
@@ -67,13 +67,13 @@ int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) 
         val = reverse_2(val);
     }
     *value = val;
-    return 1;
+    return 0;
 }
 
 int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) {
     unsigned int addr = conversion_bits_decimal(address);
     if ( addr > (mem->size) - sizeof(uint32_t) ) {
-        return 0;
+        return -1;
     }
     uint32_t val = 0;
     for (unsigned int i = 0; i < sizeof(uint32_t); ++i) {
@@ -83,17 +83,42 @@ int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) 
         val = reverse_4(val);
     }
     *value = val;
-    return 1;
+    return 0;
 }
 
 int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
-    return -1;
+    unsigned int addr = conversion_bits_decimal(address);
+    if(addr>=mem->size){
+        return -1;
+    }
+    mem->tab[addr]=value;
+    return 0;
 }
 
 int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) {
-    return -1;
+    unsigned int addr = conversion_bits_decimal(address);
+    if(addr>=mem->size){
+        return -1;
+    }
+    if(be==1){
+        value =reverse_4(value);
+    }
+    for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
+        mem->tab[addr + i] = value << (i * 8);
+    }
+    return 0;
 }
 
 int memory_write_word(memory mem, uint32_t address, uint32_t value, uint8_t be) {
-    return -1;
+    unsigned int addr = conversion_bits_decimal(address);
+    if(addr>=mem->size){
+        return -1;
+    }
+    if(be==1){
+        value =reverse_4(value);
+    }
+    for (unsigned int i = 0; i < sizeof(uint32_t); ++i) {
+        mem->tab[addr + i] = value << (i * 8);
+    }
+    return 0;
 }
