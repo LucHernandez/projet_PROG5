@@ -46,19 +46,44 @@ void memory_destroy(memory mem) {
 }
 
 int memory_read_byte(memory mem, uint32_t address, uint8_t *value) {
-    unsigned int addr = 0;
-    unsigned int puissance = 1;
-    for (unsigned int i = 0; i < 32; ++i) {
-
+    unsigned int addr = conversion_bits_decimal(address);
+    if ( addr > mem->size - sizeof(uint8_t) ) {
+        return 0;
     }
+    *value = mem->tab[addr];
+    return 1;
 }
 
 int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) {
-    return -1;
+    unsigned int addr = conversion_bits_decimal(address);
+    if ( addr > (mem->size) - sizeof(uint16_t) ) {
+        return 0;
+    }
+    uint16_t val;
+    for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
+        val += mem->tab[addr + i] << (i*8); // Cree la valeur en SMALL ENDIAN
+    }
+    if (be) {
+        val = reverse_2(val);
+    }
+    *value = val;
+    return 1;
 }
 
 int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) {
-    return -1;
+    unsigned int addr = conversion_bits_decimal(address);
+    if ( addr > (mem->size) - sizeof(uint32_t) ) {
+        return 0;
+    }
+    uint32_t val = 0;
+    for (unsigned int i = 0; i < sizeof(uint32_t); ++i) {
+        val += mem->tab[addr + i] << (i*8); // Cree la valeur en SMALL ENDIAN
+    }
+    if (be) {
+        val = reverse_4(val);
+    }
+    *value = val;
+    return 1;
 }
 
 int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
