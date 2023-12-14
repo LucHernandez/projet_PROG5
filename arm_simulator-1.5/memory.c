@@ -31,7 +31,16 @@ struct memory_data {
 
 memory memory_create(size_t size) {
     memory mem = malloc(sizeof(struct memory_data));
+    // Gestion du cas ou malloc echoue - DEMANDER AU PROF SI C'EST CORRECT
+    if (mem == NULL) {
+        exit(1);
+    }
+
     mem->tab = malloc(size);
+    if (mem->tab == NULL) {
+        mem->size = 0;
+        return mem;
+    }
     mem->size = size;
     return mem;
 }
@@ -101,7 +110,7 @@ int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) 
         return -1;
     }
     if(be){
-        value =reverse_2(value);
+        value = reverse_2(value);
     }
     for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
         mem->tab[addr + i] = value >> (i * 8);
