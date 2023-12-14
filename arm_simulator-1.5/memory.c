@@ -100,11 +100,11 @@ int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) 
     if(addr>=mem->size){
         return -1;
     }
-    if(be==1){
-        value =reverse_4(value);
+    if(be){
+        value =reverse_2(value);
     }
     for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
-        mem->tab[addr + i] = value << (i * 8);
+        mem->tab[addr + i] = value >> (i * 8);
     }
     return 0;
 }
@@ -114,11 +114,11 @@ int memory_write_word(memory mem, uint32_t address, uint32_t value, uint8_t be) 
     if(addr>=mem->size){
         return -1;
     }
-    if(be==1){
+    if(be){
         value =reverse_4(value);
     }
     for (unsigned int i = 0; i < sizeof(uint32_t); ++i) {
-        mem->tab[addr + i] = value << (i * 8);
+        mem->tab[addr + i] = value >> (i * 8);
     }
     return 0;
 }
