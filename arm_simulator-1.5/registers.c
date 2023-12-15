@@ -28,7 +28,6 @@ struct registers_data {
     // Voir page 43 Doc ARM pour correspondance des mods
     uint32_t *correspondance_modes[7][18];
     uint32_t tableau_registres[37];
-    uint8_t mode;
 };
 
 typedef enum {R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, PC, R13_SCV, R14_SCV, R13_ABT, R14_ABT, R13_UND, R14_UND, R13_IRQ, R14_IRQ, R8_FIQ, R9_FIQ, R10_FIQ, R11_FIQ, R12_FIQ, R13_FIQ, R14_FIQ, CSPR, SPSR_SVC, SPSR_ABT, SPSR_UND, SPSR_IRQ, SPSR_FIQ} lien_registres_pointeurs;
@@ -49,7 +48,7 @@ registers registers_create() {
         }
     }
 
-    // Modification du tableau pour les cas particulier
+    // Modification du tableau pour les cas particuliers
     r->correspondance_modes[0][17] = NULL;
     r->correspondance_modes[1][17] = NULL;
 
@@ -136,7 +135,7 @@ int registers_in_a_privileged_mode(registers r) {
 }
 
 int get_mode_ligne (uint8_t mode){
-    //ont recupere l'index de la ligne du tableau qui corespond au mode
+    //on recupere l'index de la ligne du tableau qui correspond au mode
     switch (mode) 
     {
         case USR :
@@ -170,7 +169,7 @@ uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
     int ligne=get_mode_ligne(mode);  //ligne corespondant au mode
 
-    //ont recupere la valeur du registre
+    //on recupere la valeur du registre
     value=*(r->correspondance_modes[ligne][reg]);
 
     return value;
@@ -179,7 +178,7 @@ uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
 uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
 
-    //ont, renvois le registre CPSR qui est le meme pour chaque mode
+    //on, renvois le registre CPSR qui est le meme pour chaque mode
     value=*(r->correspondance_modes[0][16]);
 
     return value;
@@ -188,12 +187,12 @@ uint32_t registers_read_cpsr(registers r) {
 uint32_t registers_read_spsr(registers r, uint8_t mode) {
     uint32_t value = 0;
 
-    // test si le mode a accee au registre SPSR
+    // test si le mode a acces au registre SPSR
     if (registers_mode_has_spsr(r,mode)){
         value=*(r->correspondance_modes[get_mode_ligne(mode)][17]);
     }
     else{
-        //exit si le mode ne le permer pas
+        //exit si le mode ne le permet pas
         exit(2);
     }
 
@@ -201,10 +200,10 @@ uint32_t registers_read_spsr(registers r, uint8_t mode) {
 }
 
 void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
-    //ont recupere la valeur du registre
+    //on recupere la valeur du registre
     int ligne=get_mode_ligne(mode); //ligne corespondant au mode
 
-    //ont change la valeur du registre
+    //on change la valeur du registre
     *(r->correspondance_modes[ligne][reg])=value;
 }
 
@@ -218,7 +217,7 @@ void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
         *(r->correspondance_modes[get_mode_ligne(mode)][17])=value;
     }
     else{
-        //exit si le mode ne le permer pas
+        //exit si le mode ne le permet pas
         exit(2);
     }
 }
