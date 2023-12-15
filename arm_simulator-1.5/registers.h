@@ -41,4 +41,6 @@ void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value);
 void registers_write_cpsr(registers r, uint32_t value);
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value);
 
+int get_mode_ligne (uint8_t mode);
+
 #endif
