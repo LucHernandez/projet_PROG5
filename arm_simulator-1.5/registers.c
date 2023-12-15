@@ -87,13 +87,36 @@ void registers_destroy(registers r) {
 }
 
 uint8_t registers_get_mode(registers r) {
-    /* � compl�ter... */
-    return SVC;
+    uint32_t reg_cpsr = registers_read_cpsr(r);
+    reg_cpsr &= (uint32_t) 11111;
+    switch(reg_cpsr){
+        case (uint32_t) 10000:
+            return USR;
+        case (uint32_t) 10001:
+            return FIQ;
+        case (uint32_t) 10010:
+            return IRQ;
+        case (uint32_t) 10011:
+            return SVC;
+        case (uint32_t) 10111:
+            return ABT;
+        case (uint32_t) 11011:
+            return UND;
+        case (uint32_t) 11111:
+            return SYS;
+        default:
+            return 0;
+        }
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    /* � compl�ter... */
-    return 1;
+    if(mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ){
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int registers_current_mode_has_spsr(registers r) {
@@ -101,8 +124,15 @@ int registers_current_mode_has_spsr(registers r) {
 }
 
 int registers_in_a_privileged_mode(registers r) {
-    /* � compl�ter... */
-    return 0;
+    uint8_t mode = registers_get_mode(r);
+    if (mode == SYS || mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int get_mode_ligne (uint8_t mode){
@@ -141,7 +171,7 @@ uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     int ligne=get_mode_ligne(mode);  //ligne corespondant au mode
 
     //ont recupere la valeur du registre
-    value=r->correspondance_modes[ligne][reg];
+    value=*(r->correspondance_modes[ligne][reg]);
 
     return value;
 }
@@ -150,7 +180,7 @@ uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
 
     //ont, renvois le registre CPSR qui est le meme pour chaque mode
-    value=r->correspondance_modes[0][16];
+    value=*(r->correspondance_modes[0][16]);
 
     return value;
 }
@@ -160,7 +190,7 @@ uint32_t registers_read_spsr(registers r, uint8_t mode) {
 
     // test si le mode a accee au registre SPSR
     if (registers_mode_has_spsr(r,mode)){
-        value=correspondance_modes[get_mode_ligne(mode)][17];
+        value=*(r->correspondance_modes[get_mode_ligne(mode)][17]);
     }
     else{
         //exit si le mode ne le permer pas
