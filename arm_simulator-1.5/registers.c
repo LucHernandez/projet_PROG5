@@ -180,7 +180,8 @@ uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
 
     //on, renvois le registre CPSR qui est le meme pour chaque mode
-    value=*(r->correspondance_modes[0][16]);
+    // value=*(r->correspondance_modes[0][16]);
+    value = r->tableau_registres[CPSR];
 
     return value;
 }
@@ -209,7 +210,8 @@ void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    *(r->correspondance_modes[0][16])=value;
+    // *(r->correspondance_modes[0][16])=value;
+    r->tableau_registres[CPSR] = value;
 }
 
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
