@@ -25,30 +25,75 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdlib.h>
 
 struct registers_data {
-    /* � compl�ter... */
+    // Voir page 43 Doc ARM pour correspondance des mods
+    uint32_t *correspondance_modes[7][18];
+    uint32_t tableau_registres[37];
+    uint8_t mode;
 };
 
+typedef enum {R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, PC, R13_SCV, R14_SCV, R13_ABT, R14_ABT, R13_UND, R14_UND, R13_IRQ, R14_IRQ, R8_FIQ, R9_FIQ, R10_FIQ, R11_FIQ, R12_FIQ, R13_FIQ, R14_FIQ, CSPR, SPSR_SVC, SPSR_ABT, SPSR_UND, SPSR_IRQ, SPSR_FIQ} lien_registres_pointeurs;
+
 registers registers_create() {
-    registers r = NULL;
-    /* � compl�ter... */
+    registers r = malloc(sizeof(struct registers_data));
+    if (r == NULL) {
+        exit(1);
+    }
+
+    unsigned int i;
+    unsigned int j;
+    // Remplissage du cas general du tableau
+    for (i = 0; i < 18; ++i) {
+        for (j = 0; j < 8; ++j) {
+            r->correspondance_modes[j][i] = &(r->tableau_registres[i]);
+            r->correspondance_modes[j][i] = &(r->tableau_registres[i]);
+        }
+    }
+
+    // Modification du tableau pour les cas particulier
+    r->correspondance_modes[0][17] = NULL;
+    r->correspondance_modes[1][17] = NULL;
+
+    r->correspondance_modes[2][13] = &(r->tableau_registres[R13_SCV]);
+    r->correspondance_modes[2][14] = &(r->tableau_registres[R14_SCV]);
+    r->correspondance_modes[2][17] = &(r->tableau_registres[SPSR_SVC]);
+
+    r->correspondance_modes[3][13] = &(r->tableau_registres[R13_ABT]);
+    r->correspondance_modes[3][14] = &(r->tableau_registres[R14_ABT]);
+    r->correspondance_modes[3][17] = &(r->tableau_registres[SPSR_ABT]);
+
+    r->correspondance_modes[4][13] = &(r->tableau_registres[R13_UND]);
+    r->correspondance_modes[4][14] = &(r->tableau_registres[R14_UND]);
+    r->correspondance_modes[4][17] = &(r->tableau_registres[SPSR_UND]);
+
+    r->correspondance_modes[5][13] = &(r->tableau_registres[R13_IRQ]);
+    r->correspondance_modes[5][14] = &(r->tableau_registres[R14_IRQ]);
+    r->correspondance_modes[5][17] = &(r->tableau_registres[SPSR_IRQ]);
+
+    r->correspondance_modes[6][8] = &(r->tableau_registres[R8_FIQ]);
+    r->correspondance_modes[6][9] = &(r->tableau_registres[R9_FIQ]);
+    r->correspondance_modes[6][10] = &(r->tableau_registres[R10_FIQ]);
+    r->correspondance_modes[6][11] = &(r->tableau_registres[R11_FIQ]);
+    r->correspondance_modes[6][12] = &(r->tableau_registres[R12_FIQ]);
+    r->correspondance_modes[6][13] = &(r->tableau_registres[R13_FIQ]);
+    r->correspondance_modes[6][14] = &(r->tableau_registres[R14_FIQ]);
+    r->correspondance_modes[6][17] = &(r->tableau_registres[SPSR_FIQ]);
+
     return r;
 }
 
 void registers_destroy(registers r) {
-    /* � compl�ter... */
+    free(r);
+    r = NULL;
 }
 
 uint8_t registers_get_mode(registers r) {
-    return r->mode;
+    /* � compl�ter... */
+    return SVC;
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    if(mode == FIQ || mode == IRQ || mode == SVC || mode == ABT || mode == UND){
-        return 1;
-    }
-    else{
-        return 0;
-    }
+    /* � compl�ter... */
+    return 1;
 }
 
 int registers_current_mode_has_spsr(registers r) {
@@ -56,41 +101,94 @@ int registers_current_mode_has_spsr(registers r) {
 }
 
 int registers_in_a_privileged_mode(registers r) {
-    uint8_t mode = registers_get_mode(r);
-    if(mode == SYS || mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ){
-        return 1;
-    }
-    else{
-        return 0;
-    }
+    /* � compl�ter... */
+    return 0;
+}
+
+int get_mode_ligne (uint8_t mode){
+    //ont recupere l'index de la ligne du tableau qui corespond au mode
+    switch (mode) 
+    {
+        case USR :
+            return 0;
+            break;
+        case SYS :
+            return 1;
+            break;
+        case SVC :
+            return 2;
+            break;
+        case ABT :
+            return 3;
+            break;
+        case UND :
+            return 4;
+            break;
+        case IRQ :
+            return 5;
+            break;
+        case FIQ :
+            return 6;
+            break;
+        default :
+            exit(2);
+            break;
+    };
 }
 
 uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
-    /* � compl�ter... */
+    int ligne=get_mode_ligne(mode);  //ligne corespondant au mode
+
+    //ont recupere la valeur du registre
+    value=r->correspondance_modes[ligne][reg];
+
     return value;
 }
 
 uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
-    /* � compl�ter... */
+
+    //ont, renvois le registre CPSR qui est le meme pour chaque mode
+    value=r->correspondance_modes[0][16];
+
     return value;
 }
 
 uint32_t registers_read_spsr(registers r, uint8_t mode) {
     uint32_t value = 0;
-    /* � compl�ter... */
+
+    // test si le mode a accee au registre SPSR
+    if (registers_mode_has_spsr(r,mode)){
+        value=correspondance_modes[get_mode_ligne(mode)][17];
+    }
+    else{
+        //exit si le mode ne le permer pas
+        exit(2);
+    }
+
     return value;
 }
 
 void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
-    /* � compl�ter... */
+    //ont recupere la valeur du registre
+    int ligne=get_mode_ligne(mode); //ligne corespondant au mode
+
+    //ont change la valeur du registre
+    *(r->correspondance_modes[ligne][reg])=value;
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    /* � compl�ter... */
+    *(r->correspondance_modes[0][16])=value;
 }
 
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
-    /* � compl�ter... */
+    // test si le mode a acces au registre SPSR
+    if (registers_mode_has_spsr(r,mode)){
+        *(r->correspondance_modes[get_mode_ligne(mode)][17])=value;
+    }
+    else{
+        //exit si le mode ne le permer pas
+        exit(2);
+    }
 }
