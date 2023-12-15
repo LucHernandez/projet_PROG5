@@ -39,7 +39,26 @@ void registers_destroy(registers r) {
 }
 
 uint8_t registers_get_mode(registers r) {
-    return r->mode;
+    uint32_t reg_cpsr = registers_read_cpsr(r);
+    reg_cpsr &= (uint32_t) 11111;
+    switch(reg_cpsr){
+        case (uint32_t) 10000:
+            return USR;
+        case (uint32_t) 10001:
+            return FIQ;
+        case (uint32_t) 10010:
+            return IRQ;
+        case (uint32_t) 10011:
+            return SVC;
+        case (uint32_t) 10111:
+            return ABT;
+        case (uint32_t) 11011:
+            return UND;
+        case (uint32_t) 10001:
+            return SYS;
+        default:
+            return 0;
+        }
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
