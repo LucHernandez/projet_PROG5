@@ -1,50 +1,98 @@
 /*
-Armator - simulateur de jeu d'instruction ARMv5T à but pédagogique
+Armator - simulateur de jeu d'instruction ARMv5T ï¿½ but pï¿½dagogique
 Copyright (C) 2011 Guillaume Huard
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software
-Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).
+termes de la Licence Publique Gï¿½nï¿½rale GNU publiï¿½e par la Free Software
+Foundation (version 2 ou bien toute autre version ultï¿½rieure choisie par vous).
 
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE
+Ce programme est distribuï¿½ car potentiellement utile, mais SANS AUCUNE
 GARANTIE, ni explicite ni implicite, y compris les garanties de
-commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la
-Licence Publique Générale GNU pour plus de détails.
+commercialisation ou d'adaptation dans un but spï¿½cifique. Reportez-vous ï¿½ la
+Licence Publique Gï¿½nï¿½rale GNU pour plus de dï¿½tails.
 
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même
-temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software
+Vous devez avoir reï¿½u une copie de la Licence Publique Gï¿½nï¿½rale GNU en mï¿½me
+temps que ce programme ; si ce n'est pas le cas, ï¿½crivez ï¿½ la Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
-États-Unis.
+ï¿½tats-Unis.
 
 Contact: Guillaume.Huard@imag.fr
-	 Bâtiment IMAG
+	 Bï¿½timent IMAG
 	 700 avenue centrale, domaine universitaire
-	 38401 Saint Martin d'Hères
+	 38401 Saint Martin d'Hï¿½res
 */
 #include "registers.h"
 #include "arm_constants.h"
 #include <stdlib.h>
 
 struct registers_data {
-    /* À compléter... */
+    // Voir page 43 Doc ARM pour correspondance des mods
+    uint32_t *correspondance_modes[7][18];
+    uint32_t tableau_registres[37];
+    uint8_t mode;
 };
 
+typedef enum {R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, PC, R13_SCV, R14_SCV, R13_ABT, R14_ABT, R13_UND, R14_UND, R13_IRQ, R14_IRQ, R8_FIQ, R9_FIQ, R10_FIQ, R11_FIQ, R12_FIQ, R13_FIQ, R14_FIQ, CSPR, SPSR_SVC, SPSR_ABT, SPSR_UND, SPSR_IRQ, SPSR_FIQ} lien_registres_pointeurs;
+
 registers registers_create() {
-    registers r = NULL;
-    /* À compléter... */
+    registers r = malloc(sizeof(struct registers_data));
+    if (r == NULL) {
+        exit(1);
+    }
+
+    unsigned int i;
+    unsigned int j;
+    // Remplissage du cas general du tableau
+    for (i = 0; i < 18; ++i) {
+        for (j = 0; j < 8; ++j) {
+            r->correspondance_modes[j][i] = r->tableau_registres[i];
+            r->correspondance_modes[j][i] = r->tableau_registres[i];
+        }
+    }
+
+    // Modification du tableau pour les cas particulier
+    r->correspondance_modes[0][17] = NULL;
+    r->correspondance_modes[1][17] = NULL;
+
+    r->correspondance_modes[2][13] = r->tableau_registres[R13_SCV];
+    r->correspondance_modes[2][14] = r->tableau_registres[R14_SCV];
+    r->correspondance_modes[2][17] = r->tableau_registres[SPSR_SVC];
+
+    r->correspondance_modes[3][13] = r->tableau_registres[R13_ABT];
+    r->correspondance_modes[3][14] = r->tableau_registres[R14_ABT];
+    r->correspondance_modes[3][17] = r->tableau_registres[SPSR_ABT];
+
+    r->correspondance_modes[4][13] = r->tableau_registres[R13_UND];
+    r->correspondance_modes[4][14] = r->tableau_registres[R14_UND];
+    r->correspondance_modes[4][17] = r->tableau_registres[SPSR_UND];
+
+    r->correspondance_modes[5][13] = r->tableau_registres[R13_IRQ];
+    r->correspondance_modes[5][14] = r->tableau_registres[R14_IRQ];
+    r->correspondance_modes[5][17] = r->tableau_registres[SPSR_IRQ];
+
+    r->correspondance_modes[6][8] = r->tableau_registres[R8_FIQ];
+    r->correspondance_modes[6][9] = r->tableau_registres[R9_FIQ];
+    r->correspondance_modes[6][10] = r->tableau_registres[R10_FIQ];
+    r->correspondance_modes[6][11] = r->tableau_registres[R11_FIQ];
+    r->correspondance_modes[6][12] = r->tableau_registres[R12_FIQ];
+    r->correspondance_modes[6][13] = r->tableau_registres[R13_FIQ];
+    r->correspondance_modes[6][14] = r->tableau_registres[R14_FIQ];
+    r->correspondance_modes[6][17] = r->tableau_registres[SPSR_FIQ];
+
     return r;
 }
 
 void registers_destroy(registers r) {
-    /* À compléter... */
+    free(r);
+    r = NULL;
 }
 
 uint8_t registers_get_mode(registers r) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return SVC;
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return 1;
 }
 
@@ -53,36 +101,36 @@ int registers_current_mode_has_spsr(registers r) {
 }
 
 int registers_in_a_privileged_mode(registers r) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return 0;
 }
 
 uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 uint32_t registers_read_spsr(registers r, uint8_t mode) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
 
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
