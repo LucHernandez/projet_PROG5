@@ -24,6 +24,8 @@ Contact: Guillaume.Huard@imag.fr
 #include "arm_constants.h"
 #include <stdlib.h>
 
+#define SPSR 17
+
 struct registers_data {
     // Voir page 43 Doc ARM pour correspondance des mods
     uint32_t *correspondance_modes[7][18];
@@ -49,33 +51,33 @@ registers registers_create() {
     }
 
     // Modification du tableau pour les cas particuliers
-    r->correspondance_modes[0][17] = NULL;
-    r->correspondance_modes[1][17] = NULL;
+    r->correspondance_modes[0][SPSR] = NULL;
+    r->correspondance_modes[1][SPSR] = NULL;
 
-    r->correspondance_modes[2][13] = &(r->tableau_registres[R13_SCV]);
-    r->correspondance_modes[2][14] = &(r->tableau_registres[R14_SCV]);
-    r->correspondance_modes[2][17] = &(r->tableau_registres[SPSR_SVC]);
+    r->correspondance_modes[2][R13] = &(r->tableau_registres[R13_SCV]);
+    r->correspondance_modes[2][R14] = &(r->tableau_registres[R14_SCV]);
+    r->correspondance_modes[2][SPSR] = &(r->tableau_registres[SPSR_SVC]);
 
-    r->correspondance_modes[3][13] = &(r->tableau_registres[R13_ABT]);
-    r->correspondance_modes[3][14] = &(r->tableau_registres[R14_ABT]);
-    r->correspondance_modes[3][17] = &(r->tableau_registres[SPSR_ABT]);
+    r->correspondance_modes[3][R13] = &(r->tableau_registres[R13_ABT]);
+    r->correspondance_modes[3][R14] = &(r->tableau_registres[R14_ABT]);
+    r->correspondance_modes[3][SPSR] = &(r->tableau_registres[SPSR_ABT]);
 
-    r->correspondance_modes[4][13] = &(r->tableau_registres[R13_UND]);
-    r->correspondance_modes[4][14] = &(r->tableau_registres[R14_UND]);
-    r->correspondance_modes[4][17] = &(r->tableau_registres[SPSR_UND]);
+    r->correspondance_modes[4][R13] = &(r->tableau_registres[R13_UND]);
+    r->correspondance_modes[4][R14] = &(r->tableau_registres[R14_UND]);
+    r->correspondance_modes[4][SPSR] = &(r->tableau_registres[SPSR_UND]);
 
-    r->correspondance_modes[5][13] = &(r->tableau_registres[R13_IRQ]);
-    r->correspondance_modes[5][14] = &(r->tableau_registres[R14_IRQ]);
-    r->correspondance_modes[5][17] = &(r->tableau_registres[SPSR_IRQ]);
+    r->correspondance_modes[5][R13] = &(r->tableau_registres[R13_IRQ]);
+    r->correspondance_modes[5][R14] = &(r->tableau_registres[R14_IRQ]);
+    r->correspondance_modes[5][SPSR] = &(r->tableau_registres[SPSR_IRQ]);
 
-    r->correspondance_modes[6][8] = &(r->tableau_registres[R8_FIQ]);
-    r->correspondance_modes[6][9] = &(r->tableau_registres[R9_FIQ]);
-    r->correspondance_modes[6][10] = &(r->tableau_registres[R10_FIQ]);
-    r->correspondance_modes[6][11] = &(r->tableau_registres[R11_FIQ]);
-    r->correspondance_modes[6][12] = &(r->tableau_registres[R12_FIQ]);
-    r->correspondance_modes[6][13] = &(r->tableau_registres[R13_FIQ]);
-    r->correspondance_modes[6][14] = &(r->tableau_registres[R14_FIQ]);
-    r->correspondance_modes[6][17] = &(r->tableau_registres[SPSR_FIQ]);
+    r->correspondance_modes[6][R8] = &(r->tableau_registres[R8_FIQ]);
+    r->correspondance_modes[6][R9] = &(r->tableau_registres[R9_FIQ]);
+    r->correspondance_modes[6][R10] = &(r->tableau_registres[R10_FIQ]);
+    r->correspondance_modes[6][R11] = &(r->tableau_registres[R11_FIQ]);
+    r->correspondance_modes[6][R12] = &(r->tableau_registres[R12_FIQ]);
+    r->correspondance_modes[6][R13] = &(r->tableau_registres[R13_FIQ]);
+    r->correspondance_modes[6][R14] = &(r->tableau_registres[R14_FIQ]);
+    r->correspondance_modes[6][SPSR] = &(r->tableau_registres[SPSR_FIQ]);
 
     return r;
 }
@@ -88,7 +90,7 @@ void registers_destroy(registers r) {
 uint8_t registers_get_mode(registers r) {
     uint32_t reg_cpsr = registers_read_cpsr(r);
     reg_cpsr &= (uint32_t) 0b11111;
-    printf("%d\n",reg_cpsr);
+    //printf("%d\n",reg_cpsr);
     switch(reg_cpsr){
         case (uint32_t) 0b10000:
             return USR;
@@ -191,7 +193,7 @@ uint32_t registers_read_spsr(registers r, uint8_t mode) {
 
     // test si le mode a acces au registre SPSR
     if (registers_mode_has_spsr(r,mode)){
-        value=*(r->correspondance_modes[get_mode_ligne(mode)][17]);
+        value=*(r->correspondance_modes[get_mode_ligne(mode)][SPSR]);
     }
     else{
         //exit si le mode ne le permet pas
@@ -217,7 +219,7 @@ void registers_write_cpsr(registers r, uint32_t value) {
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
     // test si le mode a acces au registre SPSR
     if (registers_mode_has_spsr(r,mode)){
-        *(r->correspondance_modes[get_mode_ligne(mode)][17])=value;
+        *(r->correspondance_modes[get_mode_ligne(mode)][SPSR])=value;
     }
     else{
         //exit si le mode ne le permet pas
