@@ -88,21 +88,22 @@ void registers_destroy(registers r) {
 
 uint8_t registers_get_mode(registers r) {
     uint32_t reg_cpsr = registers_read_cpsr(r);
-    reg_cpsr &= (uint32_t) 11111;
+    reg_cpsr &= (uint32_t) 0b11111;
+    printf("%d\n",reg_cpsr);
     switch(reg_cpsr){
-        case (uint32_t) 10000:
+        case (uint32_t) 0b10000:
             return USR;
-        case (uint32_t) 10001:
+        case (uint32_t) 0b10001:
             return FIQ;
-        case (uint32_t) 10010:
+        case (uint32_t) 0b10010:
             return IRQ;
-        case (uint32_t) 10011:
+        case (uint32_t) 0b10011:
             return SVC;
-        case (uint32_t) 10111:
+        case (uint32_t) 0b10111:
             return ABT;
-        case (uint32_t) 11011:
+        case (uint32_t) 0b11011:
             return UND;
-        case (uint32_t) 11111:
+        case (uint32_t) 0b11111:
             return SYS;
         default:
             return 0;
