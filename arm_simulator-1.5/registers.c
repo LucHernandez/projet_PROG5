@@ -44,8 +44,8 @@ registers registers_create() {
     // Remplissage du cas general du tableau
     for (i = 0; i < 18; ++i) {
         for (j = 0; j < 8; ++j) {
-            r->correspondance_modes[j][i] = r->tableau_registres[i];
-            r->correspondance_modes[j][i] = r->tableau_registres[i];
+            r->correspondance_modes[j][i] = &(r->tableau_registres[i]);
+            r->correspondance_modes[j][i] = &(r->tableau_registres[i]);
         }
     }
 
@@ -53,30 +53,30 @@ registers registers_create() {
     r->correspondance_modes[0][17] = NULL;
     r->correspondance_modes[1][17] = NULL;
 
-    r->correspondance_modes[2][13] = r->tableau_registres[R13_SCV];
-    r->correspondance_modes[2][14] = r->tableau_registres[R14_SCV];
-    r->correspondance_modes[2][17] = r->tableau_registres[SPSR_SVC];
+    r->correspondance_modes[2][13] = &(r->tableau_registres[R13_SCV]);
+    r->correspondance_modes[2][14] = &(r->tableau_registres[R14_SCV]);
+    r->correspondance_modes[2][17] = &(r->tableau_registres[SPSR_SVC]);
 
-    r->correspondance_modes[3][13] = r->tableau_registres[R13_ABT];
-    r->correspondance_modes[3][14] = r->tableau_registres[R14_ABT];
-    r->correspondance_modes[3][17] = r->tableau_registres[SPSR_ABT];
+    r->correspondance_modes[3][13] = &(r->tableau_registres[R13_ABT]);
+    r->correspondance_modes[3][14] = &(r->tableau_registres[R14_ABT]);
+    r->correspondance_modes[3][17] = &(r->tableau_registres[SPSR_ABT]);
 
-    r->correspondance_modes[4][13] = r->tableau_registres[R13_UND];
-    r->correspondance_modes[4][14] = r->tableau_registres[R14_UND];
-    r->correspondance_modes[4][17] = r->tableau_registres[SPSR_UND];
+    r->correspondance_modes[4][13] = &(r->tableau_registres[R13_UND]);
+    r->correspondance_modes[4][14] = &(r->tableau_registres[R14_UND]);
+    r->correspondance_modes[4][17] = &(r->tableau_registres[SPSR_UND]);
 
-    r->correspondance_modes[5][13] = r->tableau_registres[R13_IRQ];
-    r->correspondance_modes[5][14] = r->tableau_registres[R14_IRQ];
-    r->correspondance_modes[5][17] = r->tableau_registres[SPSR_IRQ];
+    r->correspondance_modes[5][13] = &(r->tableau_registres[R13_IRQ]);
+    r->correspondance_modes[5][14] = &(r->tableau_registres[R14_IRQ]);
+    r->correspondance_modes[5][17] = &(r->tableau_registres[SPSR_IRQ]);
 
-    r->correspondance_modes[6][8] = r->tableau_registres[R8_FIQ];
-    r->correspondance_modes[6][9] = r->tableau_registres[R9_FIQ];
-    r->correspondance_modes[6][10] = r->tableau_registres[R10_FIQ];
-    r->correspondance_modes[6][11] = r->tableau_registres[R11_FIQ];
-    r->correspondance_modes[6][12] = r->tableau_registres[R12_FIQ];
-    r->correspondance_modes[6][13] = r->tableau_registres[R13_FIQ];
-    r->correspondance_modes[6][14] = r->tableau_registres[R14_FIQ];
-    r->correspondance_modes[6][17] = r->tableau_registres[SPSR_FIQ];
+    r->correspondance_modes[6][8] = &(r->tableau_registres[R8_FIQ]);
+    r->correspondance_modes[6][9] = &(r->tableau_registres[R9_FIQ]);
+    r->correspondance_modes[6][10] = &(r->tableau_registres[R10_FIQ]);
+    r->correspondance_modes[6][11] = &(r->tableau_registres[R11_FIQ]);
+    r->correspondance_modes[6][12] = &(r->tableau_registres[R12_FIQ]);
+    r->correspondance_modes[6][13] = &(r->tableau_registres[R13_FIQ]);
+    r->correspondance_modes[6][14] = &(r->tableau_registres[R14_FIQ]);
+    r->correspondance_modes[6][17] = &(r->tableau_registres[SPSR_FIQ]);
 
     return r;
 }
