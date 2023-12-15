@@ -30,6 +30,10 @@ typedef struct registers_data *registers;
 registers registers_create();
 void registers_destroy(registers r);
 
+/* Schema pour trouver où le mode se situe dans CPSR
+31 30 29 28 27 26 25 24 23 .. 20 19 .. 16 15 .. 10 9 8 7 6 5 4 .. 0
+N  Z  S  V  Q  Res   J  RESERVED GE       RESERVED E A I F T MODE
+*/
 uint8_t registers_get_mode(registers r);
 int registers_current_mode_has_spsr(registers r);
 int registers_in_a_privileged_mode(registers r);

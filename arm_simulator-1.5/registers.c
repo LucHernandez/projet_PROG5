@@ -89,7 +89,7 @@ void registers_destroy(registers r) {
 
 uint8_t registers_get_mode(registers r) {
     uint32_t reg_cpsr = registers_read_cpsr(r);
-    reg_cpsr &= (uint32_t) 0b11111;
+    reg_cpsr &= (uint32_t) 0b11111; // Récuperation des 5 bits de mode
     //printf("%d\n",reg_cpsr);
     switch(reg_cpsr){
         case (uint32_t) 0b10000:
@@ -112,13 +112,7 @@ uint8_t registers_get_mode(registers r) {
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    if(mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ){
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return (mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ);
 }
 
 int registers_current_mode_has_spsr(registers r) {
@@ -127,14 +121,7 @@ int registers_current_mode_has_spsr(registers r) {
 
 int registers_in_a_privileged_mode(registers r) {
     uint8_t mode = registers_get_mode(r);
-    if (mode == SYS || mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return (mode == SYS || mode == SVC || mode == ABT || mode == UND || mode == IRQ || mode == FIQ);
 }
 
 int get_mode_ligne (uint8_t mode){
@@ -143,34 +130,26 @@ int get_mode_ligne (uint8_t mode){
     {
         case USR :
             return 0;
-            break;
         case SYS :
             return 1;
-            break;
         case SVC :
             return 2;
-            break;
         case ABT :
             return 3;
-            break;
         case UND :
             return 4;
-            break;
         case IRQ :
             return 5;
-            break;
         case FIQ :
             return 6;
-            break;
         default :
             exit(2);
-            break;
-    };
+    }
 }
 
 uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
-    int ligne=get_mode_ligne(mode);  //ligne corespondant au mode
+    int ligne=get_mode_ligne(mode);  //ligne correspondant au mode
 
     //on recupere la valeur du registre
     value=*(r->correspondance_modes[ligne][reg]);
@@ -182,7 +161,6 @@ uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
 
     //on, renvois le registre CPSR qui est le meme pour chaque mode
-    // value=*(r->correspondance_modes[0][16]);
     value = r->tableau_registres[CPSR];
 
     return value;
@@ -212,7 +190,6 @@ void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    // *(r->correspondance_modes[0][16])=value;
     r->tableau_registres[CPSR] = value;
 }
 
