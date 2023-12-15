@@ -30,7 +30,7 @@ struct registers_data {
     uint32_t tableau_registres[37];
 };
 
-typedef enum {R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, PC, R13_SCV, R14_SCV, R13_ABT, R14_ABT, R13_UND, R14_UND, R13_IRQ, R14_IRQ, R8_FIQ, R9_FIQ, R10_FIQ, R11_FIQ, R12_FIQ, R13_FIQ, R14_FIQ, CSPR, SPSR_SVC, SPSR_ABT, SPSR_UND, SPSR_IRQ, SPSR_FIQ} lien_registres_pointeurs;
+typedef enum {R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, PC, CPSR, R13_SCV, R14_SCV, R13_ABT, R14_ABT, R13_UND, R14_UND, R13_IRQ, R14_IRQ, R8_FIQ, R9_FIQ, R10_FIQ, R11_FIQ, R12_FIQ, R13_FIQ, R14_FIQ, SPSR_SVC, SPSR_ABT, SPSR_UND, SPSR_IRQ, SPSR_FIQ} lien_registres_pointeurs;
 
 registers registers_create() {
     registers r = malloc(sizeof(struct registers_data));
