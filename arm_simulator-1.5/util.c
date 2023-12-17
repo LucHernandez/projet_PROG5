@@ -35,14 +35,3 @@ int is_big_endian() {
     static uint32_t one = 1;
     return ((*(uint8_t *) & one) == 0);
 }
-
-int conversion_bits_decimal(uint32_t val){
-	int somme = 0;
-	int puissance = 1;
-	for(int i = 0; i<32; i++){
-		int bit = get_bit(val, i);
-		somme = somme + (puissance * bit);
-		puissance *= 2;
-	}
-	return somme;
-}
