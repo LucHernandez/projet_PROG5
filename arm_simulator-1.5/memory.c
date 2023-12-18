@@ -21,6 +21,7 @@ Contact: Guillaume.Huard@imag.fr
 	 38401 Saint Martin d'H�res
 */
 #include <stdlib.h>
+#include <stdio.h>
 #include "memory.h"
 #include "util.h"
 
@@ -55,7 +56,6 @@ void memory_destroy(memory mem) {
 }
 
 int memory_read_byte(memory mem, uint32_t address, uint8_t *value) {
-    // unsigned int addr = conversion_bits_decimal(address);
     if ( address > mem->size - sizeof(uint8_t) ) {
         return -1;
     }
@@ -64,11 +64,10 @@ int memory_read_byte(memory mem, uint32_t address, uint8_t *value) {
 }
 
 int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) {
-    // unsigned int addr = conversion_bits_decimal(address);
     if ( address > (mem->size) - sizeof(uint16_t) ) {
         return -1;
     }
-    uint16_t val;
+    uint16_t val = 0;
     for (unsigned int i = 0; i < sizeof(uint16_t); ++i) {
         val += mem->tab[address + i] << (i*8); // Cree la valeur en SMALL ENDIAN
     }
@@ -80,7 +79,6 @@ int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) 
 }
 
 int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) {
-    // unsigned int addr = conversion_bits_decimal(address);
     if ( address > (mem->size) - sizeof(uint32_t) ) {
         return -1;
     }
@@ -96,8 +94,7 @@ int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) 
 }
 
 int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
-    // unsigned int addr = conversion_bits_decimal(address);
-    if(address>=mem->size){
+    if(address >= mem->size){
         return -1;
     }
     mem->tab[address]=value;
@@ -105,7 +102,6 @@ int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
 }
 
 int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) {
-    // unsigned int addr = conversion_bits_decimal(address);
     if(address>=mem->size){
         return -1;
     }
@@ -119,7 +115,6 @@ int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) 
 }
 
 int memory_write_word(memory mem, uint32_t address, uint32_t value, uint8_t be) {
-    // unsigned int addr = conversion_bits_decimal(address);
     if(address>=mem->size){
         return -1;
     }
