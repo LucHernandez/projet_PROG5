@@ -45,6 +45,7 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
+//
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out) {
 	uint32_t shifter_operand = 0;
 
@@ -55,6 +56,9 @@ uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_ou
 		if (get_bits(instruction, 11, 8) == 0 && carry_out != NULL) {
 			*carry_out = get_bit(arm_read_cpsr(p), C);
 		}
+		else if (carry_out != NULL) {
+			*carry_out = get_bit(shifter_operand, 31);
+		}
     }
     else if (get_bits(instruction, 11, 4) == 0) { // Verif si on a juste un reg sans rotate
         shifter_operand = arm_read_register(p, get_bits(instruction, 3, 0));
@@ -63,37 +67,148 @@ uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_ou
 		}
     }
 	else if (get_bits(instruction, 11, 4) == 0b110) { // Verif si on a rotate with right extend
-		uint32_t shifter_operand = (get_bit(arm_read_cpsr(p), C) << 31) | (arm_read_register(p, get_bits(instruction, 3, 0)) >> 1);
+		shifter_operand = (get_bit(arm_read_cpsr(p), C) << 31) | (arm_read_register(p, get_bits(instruction, 3, 0)) >> 1);
 		if (carry_out != NULL) {
 			*carry_out = get_bit(arm_read_register(p, get_bits(instruction, 3, 0)), 0);
 		}
 	}
+	else { // Sinon on a un joli tableau de correspondance :D
+		uint32_t (*adressing_modes[8])(arm_core, uint32_t, uint8_t*) = {
+			get_shifter_operand_LsL_imm,
+			get_shifter_operand_LsL_reg,
+			get_shifter_operand_LsR_imm,
+			get_shifter_operand_LsR_reg,
+			get_shifter_operand_AsR_imm, 
+			get_shifter_operand_AsR_reg,
+			get_shifter_operand_RoR_imm,
+			get_shifter_operand_RoR_reg
+		};
+		shifter_operand = adressing_modes[get_bits(instruction, 6, 4)](p, instruction, carry_out);
+	}
 
-	// Sinon on a un joli tableau de correspondance :D
-
+	return shifter_operand;
 }
 
 uint32_t get_shifter_operand_LsL_imm(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	uint32_t shift_imm = get_bits(instruction, 11, 7);
+	if (shift_imm == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(arm_read_cpsr(p), C);
+		return rm;
+	}
+	if (carry_out != NULL) *carry_out = get_bit(rm, 32 - shift_imm);
+	return rm << shift_imm;
 }
+
 uint32_t get_shifter_operand_LsL_reg(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t rs07 = get_bits(arm_read_register(p, get_bits(instruction, 11, 8)), 7, 0);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (rs07 == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(arm_read_cpsr(p), C);
+		return rm;
+	}
+	else if (rs07 < 32) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 32 - rs07);
+		return rm << rs07;
+	}
+	else if (rs07 == 32) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 0);
+		return 0;
+	}
+	else {
+		if (carry_out != NULL) *carry_out = 0;
+		return 0;
+	}
 }
+
 uint32_t get_shifter_operand_LsR_imm(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t shift_imm = get_bits(instruction, 11, 7);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (shift_imm == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 31);
+		return 0;
+	} else {
+		if (carry_out != NULL) *carry_out = get_bit(rm, shift_imm - 1);
+		return rm >> shift_imm;
+	}
 }
+
 uint32_t get_shifter_operand_LsR_reg(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t Rs07 = get_bits(arm_read_register(p, get_bits(instruction, 11, 8)), 7, 0);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (Rs07 == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(arm_read_cpsr(p), C);
+		return rm;
+	}
+	else if (Rs07 < 32) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, Rs07 - 1);
+		return rm >> Rs07;
+	}
+	else if (Rs07 == 32) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 31);
+		return 0;
+	}
+	else {
+		if (carry_out != NULL) *carry_out = 0;
+		return 0;
+	}
 }
+
 uint32_t get_shifter_operand_AsR_imm(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t shift_imm = get_bits(instruction, 11, 7);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (shift_imm != 0) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, shift_imm - 1);
+		return asr(rm, shift_imm);
+	}
+	if (carry_out != NULL) *carry_out = get_bit(rm, 31);
+	if (get_bit(rm, 31) == 0) {
+		return 0;
+	}
+	return 0xFFFFFFFF;
 }
+
 uint32_t get_shifter_operand_AsR_reg(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t Rs07 = get_bits(arm_read_register(p, get_bits(instruction, 11, 8)), 7, 0);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (Rs07 == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(arm_read_cpsr(p), C);
+		return rm;
+	}
+	else if (Rs07 < 32) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, Rs07 - 1);
+		return asr(rm, Rs07);
+	}
+	if (get_bit(rm, 31) == 0) {
+		if (carry_out != NULL) *carry_out = 0;
+		return 0; // = rm[31]
+	}
+	if (carry_out != NULL) *carry_out = 1;
+	return 0xFFFFFFFF; // = rm[31]
 }
+
 uint32_t get_shifter_operand_RoR_imm(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t shift_imm = get_bits(instruction, 11, 7);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (shift_imm == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 0);
+		return (get_bit(arm_read_cpsr(p), C) << 31) | (rm >> 1);
+	}
+	if (carry_out != NULL) *carry_out = get_bit(rm, shift_imm - 1);
+	return ror(rm, shift_imm);
 }
+
 uint32_t get_shifter_operand_RoR_reg(arm_core p, uint32_t instruction, uint8_t *carry_out) {
-	
+	uint32_t rs40 = get_bits(arm_read_register(p, get_bits(instruction, 11, 8)), 4, 0);
+	uint32_t rm = arm_read_register(p, get_bits(instruction, 3, 0));
+	if (get_bits(arm_read_register(p, get_bits(instruction, 11, 8)), 7, 0) == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(arm_read_cpsr(p), C);
+		return rm;
+	}
+	if (rs40 == 0) {
+		if (carry_out != NULL) *carry_out = get_bit(rm, 31);
+		return rm;
+	}
+	if (carry_out != NULL) *carry_out = get_bit(rm, rs40 - 1);
+	return ror(rm, rs40);
 }
