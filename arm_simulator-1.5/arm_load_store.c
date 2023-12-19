@@ -40,30 +40,31 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
 }
 
 int verif_addr_mode(arm_core p,uint32_t ins){
-    int Rn = get_bits(ins,19,16);
+    int RnNum = get_bits(ins,19,16);
+    int RnVal = arm_read_register(p,Rn);
     int result = 0;
     if(get_bit(ins,25)==0){ //I==0
         int offset = get_bits(ins,11,0);
         if(get_bit(ins,24)==1){ // P==1
             if(get_bit(ins,21)==1){ // W==1
                 if(get_bit(ins,23)==1){ // U==1
-                    result = Rn + offset;
-                    arm_write_register(p,(uint8_t)Rn,result);
+                    result = RnVal + offset;
+                    arm_write_register(p,(uint8_t)RnNum,result);
                     return result;
                 }
                 else{ // U==0
-                    result = Rn - offset;
-                    arm_write_register(p,(uint8_t)Rn,result);
+                    result = RnVal - offset;
+                    arm_write_register(p,(uint8_t)RnNum,result);
                     return result;
                 }
             }
             else{ // W==0
                 if(get_bit(ins,23)==1){ // U==1
-                    result = Rn + offset;
+                    result = RnVal + offset;
                     return result;
                 }
                 else{ // U==0
-                    result = Rn - offset;
+                    result = RnVal - offset;
                     return result;
                 }  
             }
@@ -79,14 +80,14 @@ int verif_addr_mode(arm_core p,uint32_t ins){
             }
             else{ // W==0
                 if(get_bit(ins,23)==1){ // U==1
-                    result = Rn + offset;
-                    arm_write_register(p,(uint8_t)Rn,result);
-                    return Rn;
+                    result = RnVal + offset;
+                    arm_write_register(p,(uint8_t)RnNum,result);
+                    return RnVal;
                 }
                 else{ // U==0
-                    result = Rn - offset;
-                    arm_write_register(p,(uint8_t)Rn,result);
-                    return Rn;
+                    result = RnVal - offset;
+                    arm_write_register(p,(uint8_t)RnNum,result);
+                    return RnVal;
                 }
             }
 
