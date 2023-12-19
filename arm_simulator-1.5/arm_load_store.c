@@ -41,7 +41,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
 
 int verif_addr_mode(arm_core p,uint32_t ins){
     int RnNum = get_bits(ins,19,16);
-    int RnVal = arm_read_register(p,Rn);
+    int RnVal = arm_read_register(p,RnNum);
     int result = 0;
     if(get_bit(ins,25)==0){ //I==0
         int offset = get_bits(ins,11,0);
@@ -92,5 +92,10 @@ int verif_addr_mode(arm_core p,uint32_t ins){
             }
 
         }
+    }
+    else{ // I==1
+        int RmNum = get_bits(ins,3,0);
+        int RnVal = arm_read_register(p,RmNum);
+        
     }
 }
