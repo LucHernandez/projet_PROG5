@@ -43,11 +43,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
     int RnNum = get_bits(ins,19,16);
     int RnVal = arm_read_register(p,RnNum);
     int result = 0;
-    if(get_bit(ins,25)==0){ //I==0
+
+    uint8_t i,p,w,u;
+    i = get_bit(ins,25);
+    p = get_bit(ins,24);
+    w = get_bit(ins,21);
+    u = get_bit(ins,23) ;
+    if(i==0){ //I==0
         int offset = get_bits(ins,11,0);
-        if(get_bit(ins,24)==1){ // P==1
-            if(get_bit(ins,21)==1){ // W==1
-                if(get_bit(ins,23)==1){ // U==1
+        if(p==1){ // P==1
+            if(w==1){ // W==1
+                if(u==1){ // U==1
                     result = RnVal + offset;
                     arm_write_register(p,(uint8_t)RnNum,result);
                     return result;
@@ -59,7 +65,7 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                 }
             }
             else{ // W==0
-                if(get_bit(ins,23)==1){ // U==1
+                if(u==1){ // U==1
                     result = RnVal + offset;
                     return result;
                 }
@@ -70,8 +76,8 @@ int verif_addr_mode(arm_core p,uint32_t ins){
             }
         }
         else{ //P==0
-            if(get_bit(ins,21)==1){ // W==1
-                if(get_bit(ins,23)==1){ // U==1
+            if(w==1){ // W==1
+                if(u==1){ // U==1
                     return UNDEFINED_INSTRUCTION;
                 }
                 else{ // U==0
@@ -79,7 +85,7 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                 }
             }
             else{ // W==0
-                if(get_bit(ins,23)==1){ // U==1
+                if(u==1){ // U==1
                     result = RnVal + offset;
                     arm_write_register(p,(uint8_t)RnNum,result);
                     return RnVal;
@@ -97,5 +103,6 @@ int verif_addr_mode(arm_core p,uint32_t ins){
         int RmNum = get_bits(ins,3,0);
         int RnVal = arm_read_register(p,RmNum);
         
+        if 
     }
 }
