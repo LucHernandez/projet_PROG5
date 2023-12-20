@@ -39,10 +39,10 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
-int verif_addr_mode(arm_core p,uint32_t ins){
-    int RnNum = get_bits(ins,19,16);
-    int RnVal = arm_read_register(p,RnNum);
-    int result = 0;
+int32_t verif_addr_mode(arm_core p,uint32_t ins){
+    uint8_t RnNum = get_bits(ins,19,16);
+    int32_t RnVal = arm_read_register(p,RnNum);
+    int32_t result = 0;
 
     uint8_t i,pb,w,u;
     i = get_bit(ins,25);
@@ -63,6 +63,9 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                 }
                 else{
                     result = RnVal - offset;
+                    if(result < 0){
+                        return -1;
+                    }
                     arm_write_register(p,(uint8_t)RnNum,result);
                     return result;
                 }
@@ -73,10 +76,16 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                 }
                 if(u==1){ // U==1
                     result = RnVal + offset;
+                    if(result < 0){
+                        return -1;
+                    }
                     return result;
                 }
                 else{ // U==0
                     result = RnVal - offset;
+                    if(result < 0){
+                        return -1;
+                    }
                     return result;
                 }  
             }
@@ -96,11 +105,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                 }
                 if(u==1){ // U==1
                     result = RnVal + offset;
+                    if(result < 0){
+                        return -1;
+                    }
                     arm_write_register(p,(uint8_t)RnNum,result);
                     return RnVal;
                 }
                 else{ // U==0
                     result = RnVal - offset;
+                    if(result < 0){
+                        return -1;
+                    }
                     arm_write_register(p,(uint8_t)RnNum,result);
                     return RnVal;
                 }
@@ -109,8 +124,8 @@ int verif_addr_mode(arm_core p,uint32_t ins){
         }
     }
     else{ // Cas des registres
-        int RmNum = get_bits(ins,3,0);
-        int RmVal = arm_read_register(p,RmNum);
+        uint8_t RmNum = get_bits(ins,3,0);
+        int32_t RmVal = arm_read_register(p,RmNum);
         int Shift = get_bits(ins,6,5);
         int Shift_imm = get_bits(ins,11,7);
         int index = 0;
@@ -122,11 +137,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     }
                     if(u==1){
                         result = RnVal + RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return result;
                     }
                     else{
                         result = RnVal - RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return result;
                     }
@@ -138,11 +159,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return result;
                     }
                     else{
                         result = RnVal - index;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return result;
                     }
@@ -158,16 +185,22 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     }
                     if(u==1){
                         result = RnVal + RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         return result;
                     }
                     else{
                         result = RnVal - RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         return result;
                     }
                 }
                 else{ //Scaled Reg offset p462
                     if(RnNum == 15){
-                        RnVal = RnVal + 8;;
+                        RnVal = RnVal + 8;
                     }
                     if(RmNum == 15){ // Cas UNPREDICTABLE
                         return -1;
@@ -175,10 +208,16 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
+                        if(result < 0){
+                        return -1;
+                        }
                         return result;
                     }
                     else{
                         result = RnVal - index;
+                        if(result < 0){
+                        return -1;
+                        }
                         return result;
                     }
                 }
@@ -200,11 +239,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     }
                     if(u==1){
                         result = RnVal + RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return RnVal;
                     }
                     else{
                         result = RnVal - RmVal;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return RnVal;
                     }
@@ -216,11 +261,17 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return RnVal;
                     }
                     else{
                         result = RnVal - index;
+                        if(result < 0){
+                        return -1;
+                        }
                         arm_write_register(p,(uint8_t)RnNum,result);
                         return RnVal;
                     }
@@ -232,7 +283,7 @@ int verif_addr_mode(arm_core p,uint32_t ins){
 }
 
 
-int Shift_case(arm_core p,int Shift,int RmVal,int Shift_imm){
+int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
     int index = 0;
     switch(Shift){
         case 0b00:
