@@ -39,10 +39,10 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
-int32_t verif_addr_mode(arm_core p,uint32_t ins){
+uint32_t addr_modeWB(arm_core p,uint32_t ins){
     uint8_t RnNum = get_bits(ins,19,16);
-    int32_t RnVal = arm_read_register(p,RnNum);
-    int32_t result = 0;
+    uint32_t RnVal = arm_read_register(p,RnNum);
+    uint32_t result = 0;
 
     uint8_t i,pb,w,u;
     i = get_bit(ins,25);
@@ -58,7 +58,7 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
                 }
                 if(u==1){
                     result = RnVal + offset;
-                    arm_write_register(p,(uint8_t)RnNum,result);
+                    arm_write_register(p,RnNum,result);
                     return result;
                 }
                 else{
@@ -66,7 +66,7 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
                     if(result < 0){
                         return -1;
                     }
-                    arm_write_register(p,(uint8_t)RnNum,result);
+                    arm_write_register(p,RnNum,result);
                     return result;
                 }
             }
@@ -101,22 +101,16 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
             }
             else{ // Immediate post-index p464
                 if(RnNum == 15){ // Cas UNPREDICTABLE
-                    return -1;
+                    return DATA_ABORT;
                 }
                 if(u==1){ // U==1
                     result = RnVal + offset;
-                    if(result < 0){
-                        return -1;
-                    }
-                    arm_write_register(p,(uint8_t)RnNum,result);
+                    arm_write_register(p,RnNum,result);
                     return RnVal;
                 }
                 else{ // U==0
                     result = RnVal - offset;
-                    if(result < 0){
-                        return -1;
-                    }
-                    arm_write_register(p,(uint8_t)RnNum,result);
+                    arm_write_register(p,RnNum,result);
                     return RnVal;
                 }
             }
@@ -125,7 +119,7 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
     }
     else{ // Cas des registres
         uint8_t RmNum = get_bits(ins,3,0);
-        int32_t RmVal = arm_read_register(p,RmNum);
+        uint32_t RmVal = arm_read_register(p,RmNum);
         int Shift = get_bits(ins,6,5);
         int Shift_imm = get_bits(ins,11,7);
         int index = 0;
@@ -133,44 +127,32 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
             if(w==1){
                 if(get_bits(ins,11,4)==0){ //Reg pre-indexed p465
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     if(u==1){
                         result = RnVal + RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return result;
                     }
                     else{
                         result = RnVal - RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return result;
                     }
                 }
                 else{ //Scaled Reg pre-indexed p466
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return result;
                     }
                     else{
                         result = RnVal - index;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return result;
                     }
                 }
@@ -181,20 +163,15 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
                         RnVal = RnVal + 8;;
                     }
                     if(RmNum == 15){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     if(u==1){
                         result = RnVal + RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
                         return result;
                     }
                     else{
                         result = RnVal - RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
+    
                         return result;
                     }
                 }
@@ -203,21 +180,15 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
                         RnVal = RnVal + 8;
                     }
                     if(RmNum == 15){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
-                        if(result < 0){
-                        return -1;
-                        }
                         return result;
                     }
                     else{
                         result = RnVal - index;
-                        if(result < 0){
-                        return -1;
-                        }
                         return result;
                     }
                 }
@@ -235,44 +206,32 @@ int32_t verif_addr_mode(arm_core p,uint32_t ins){
             else{
                 if(get_bits(ins,11,4)==0){ //Reg post-indexed p470
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     if(u==1){
                         result = RnVal + RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return RnVal;
                     }
                     else{
                         result = RnVal - RmVal;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return RnVal;
                     }
                 }
                 else{ //Scaled Reg post-indexed p471
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
-                        return -1;
+                        return DATA_ABORT;
                     }
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return RnVal;
                     }
                     else{
                         result = RnVal - index;
-                        if(result < 0){
-                        return -1;
-                        }
-                        arm_write_register(p,(uint8_t)RnNum,result);
+                        arm_write_register(p,RnNum,result);
                         return RnVal;
                     }
                 }
@@ -439,7 +398,7 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=verif_addr_mode(p,ins);
+    addr=addr_modeWB(p,ins);
     arm_write_word(p,addr,value);
     return 0;
 }
@@ -447,7 +406,7 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=verif_addr_mode(p,ins);    
+    addr=addr_modeWB(p,ins);    
     arm_write_byte(p,addr,value);
     return 0;
 }
