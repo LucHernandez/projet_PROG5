@@ -45,6 +45,93 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
+
+int execute_AND(arm_core p, uint32_t instruction) {
+	uint8_t rd = get_bits(instruction, 15, 12);
+	uint8_t rn = get_bits(instruction, 19, 16);
+	uint8_t update_cpsr = get_bit(instruction, 20);
+	uint8_t carry_out = 0;
+	uint32_t value = arm_read_register(p, rn) & get_shifter_operand(p, instruction, &carry_out);
+	arm_write_register(p, rd, value);
+	if (update_cpsr) {
+		if (rd == 15 && arm_current_mode_has_spsr(p)) {
+			arm_write_cpsr(p, arm_read_spsr(p));
+		} else {
+			if (!arm_current_mode_has_spsr(p)) return -1;
+			uint32_t flags = ((get_bit(arm_read_register(p, rd), 31)) << 3) | ((arm_read_register(p, rd) == 0 ? 1 : 0) << 2) | (carry_out << 1);
+			uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+			arm_write_cpsr(p, cpsr | flags << 28);
+		}
+	}
+	return 0;
+}
+
+int execute_EOR(arm_core p, uint32_t instruction) {
+	uint8_t rd = get_bits(instruction, 15, 12);
+	uint8_t rn = get_bits(instruction, 19, 16);
+	uint8_t update_cpsr = get_bit(instruction, 20);
+	uint8_t carry_out = 0;
+	uint32_t value = arm_read_register(p, rn) ^ get_shifter_operand(p, instruction, &carry_out);
+	arm_write_register(p, rd, value);
+	if (update_cpsr) {
+		if (rd == 15 && arm_current_mode_has_spsr(p)) {
+			arm_write_cpsr(p, arm_read_spsr(p));
+		} else {
+			if (!arm_current_mode_has_spsr(p)) return -1;
+			uint32_t flags = ((get_bit(arm_read_register(p, rd), 31)) << 3) | ((arm_read_register(p, rd) == 0 ? 1 : 0) << 2) | (carry_out << 1);
+			uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+			arm_write_cpsr(p, cpsr | flags << 28);
+		}
+	}
+	return 0;
+}
+
+int execute_TST(arm_core p, uint32_t instruction) {
+	uint8_t rn = get_bits(instruction, 19, 16);
+	uint8_t carry_out = 0;
+	uint32_t alu_out = arm_read_register(p, rn) & get_shifter_operand(p, instruction, &carry_out);
+	uint32_t flags = ((get_bit(alu_out, 31)) << 3) | ((alu_out == 0 ? 1 : 0) << 2) | (carry_out << 1);
+	uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+	arm_write_cpsr(p, cpsr | flags << 28);
+	return 0;
+}
+
+int execute_TEQ(arm_core p, uint32_t instruction) {
+	uint8_t rn = get_bits(instruction, 19, 16);
+	uint8_t carry_out = 0;
+	uint32_t alu_out = arm_read_register(p, rn) ^ get_shifter_operand(p, instruction, &carry_out);
+	uint32_t flags = ((get_bit(alu_out, 31)) << 3) | ((alu_out == 0 ? 1 : 0) << 2) | (carry_out << 1);
+	uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+	arm_write_cpsr(p, cpsr | flags << 28);
+	return 0;
+}
+
+int execute_CMP(arm_core p, uint32_t instruction) {
+	uint8_t rn = get_bits(instruction, 19, 16);
+	uint8_t carry_out = 0;
+	uint32_t v1 = arm_read_register(p, rn);
+	uint32_t v2 = get_shifter_operand(p, instruction, &carry_out);
+	uint32_t alu_out = v1 - v2;
+	// voir borrow et overflow sur https://www.wikiwand.com/en/Integer_overflow#Flags
+	uint8_t borrow = v2 > v1; // Borrow c'est le carry des soustractions
+	uint8_t overflow = get_bit(v1, 31) != get_bit(v2, 31) && get_bit(alu_out, 31) == get_bit(v2, 31); // MsB != Carry (= borrow)
+	uint32_t flags = ((get_bit(alu_out, 31)) << 3) | ((alu_out == 0 ? 1 : 0) << 2) | ((get_bit(!borrow, 0)) << 1) | (get_bit(overflow, 0));
+	uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+	arm_write_cpsr(p, cpsr | flags << 28);
+	return 0;
+}
+
+// int execute_CMN(arm_core p, uint32_t instruction) {
+// 	uint8_t rn = get_bits(instruction, 19, 16);
+// 	uint8_t carry_out = 0;
+// 	uint32_t v1 = arm_read_register(p, rn);
+// 	uint32_t v2 = get_shifter_operand(p, instruction, &carry_out);
+// 	uint32_t alu_out = v1 + v2;
+// 	uint8_t carry = 
+// 	uint8_t overflow = (get_bit(v1, 31) == get_bit(v2, 31) && get_bit(alu_out, 31) != get_bit(v2, 31));
+// 	return 0;
+// }
+
 //
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out) {
 	uint32_t shifter_operand = 0;
