@@ -39,7 +39,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
-uint32_t addr_modeWB(arm_core p,uint32_t ins){
+uint32_t mode_addr_WB(arm_core p,uint32_t ins){
     uint8_t RnNum = get_bits(ins,19,16);
     uint32_t RnVal = arm_read_register(p,RnNum);
     uint32_t result = 0;
