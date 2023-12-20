@@ -25,7 +25,7 @@ Contact: Guillaume.Huard@imag.fr
 #include "arm_core.h"
 
 int arm_instruction_condition(arm_core p, uint32_t instruction);
-static int arm_execute_instruction(arm_core p);
+int arm_instruction_type_decode(arm_core p, uint32_t instruction, int code);
 int arm_step(arm_core p);
 
 #endif

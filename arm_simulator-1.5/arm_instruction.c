@@ -47,7 +47,7 @@ int arm_instruction_condition(arm_core p, uint32_t instruction){
             return -1;
         case 0b0010: //case carry set / unsigned higher or same
             if(c == 1){
-                return;
+                return 0;
             }
             return -1;
         case 0b0011: //case carry clear/ unsigned lower
@@ -114,13 +114,102 @@ int arm_instruction_condition(arm_core p, uint32_t instruction){
         }
 }
 
-int arm_instruction_type_decode(arm_core p, uint32_t instruction){
-    return UNDEFINED_INSTRUCTION;
+int arm_instruction_type_decode(arm_core p, uint32_t instruction, int code){ //p.110s
+    int bits_25_27 = get_bits(instruction, 27, 25);
+    int bits_24_20 = get_bits(instruction, 24, 20);
+    int bits_7_4 = get_bits(instruction, 7, 4);
+    int bit_24 = get_bit(instruction, 24);
+    int bit_23 = get_bit(instruction, 23);
+    int bit_21 = get_bit(instruction, 21);
+    int bit_20 = get_bit(instruction, 20);
+    int bit_7 = get_bit(instruction, 7);
+    int bit_4 = get_bit(instruction, 4);
+
+    int err_instru;
+    if (code == 1 && (bits_25_27 != 0b110 || bits_25_27 != 0b111)) //test si condition instruction est 1111 si oui alors on est dans unconditional instructions 
+    {
+        return UNDEFINED_INSTRUCTION;
+    }
+    switch(bits_25_27)
+    {
+    case 0b000:
+        if(bit_24 == 1 && bit_23 == 0 && bit_20 == 0 && bit_4 == 0 ){ //miscellaneous instruction
+            err_instru = arm_miscellaneous(p, instruction);
+            return err_instru;
+        }
+        if(bit_4 == 0){ //data processing immediate shift
+            err_instru = arm_data_processing_instructions(p, instruction);
+            return err_instru;
+        }
+        if(bit_24 == 1 && bit_23 == 0 && bit_20 == 0 && bit_7 == 0 && bit_4 == 1 ){ //miscellaneous instruction
+            err_instru = arm_miscellaneous(p, instruction);
+            return err_instru;
+        }
+        if(bit_7 == 0 && bit_4 == 1){ //data processing register shift
+            err_instru = arm_data_processing_instructions(p, instruction);
+            return err_instru;
+        }
+        if(bit_7 == 1 && bit_4 == 1){ //multiplies or extra load/store
+            err_instru = arm_load_store(p, instruction); //cas du ldrh et du strh 
+            //si ajout des fonctions de multiplication utiliser une deuxième variable pour le err_instru des multiplications
+            return err_instru;
+        }
+        return UNDEFINED_INSTRUCTION;
+    case 0b001:
+        if(bit_24 == 1 && bit_23 == 0 && bit_21 == 0 && bit_20 == 0){ //undefined instruction
+            return UNDEFINED_INSTRUCTION;
+        }
+        if(bit_24 == 1 && bit_23 == 0 && bit_21 == 1 && bit_20 == 0){ //move immediate to status register c'est dans les miscellaneous
+            err_instru = arm_miscellaneous(p, instruction);
+            return err_instru;
+        }
+        err_instru = arm_data_processing_instructions(p, instruction); //data processing immediate
+        return err_instru;
+    case 0b010: //load/store immediate offset
+        err_instru = arm_load_store(p, instruction);
+        return err_instru;
+    case 0b011:
+        if(bits_24_20 == 0b11111 && bits_7_4 == 0b1111){ //architecturally undefined
+            return UNDEFINED_INSTRUCTION;
+        }
+        if(bit_4 == 1){ //media instructions
+            return UNDEFINED_INSTRUCTION;
+        }
+        if(bit_4 == 0){ //load/store register offset
+            err_instru = arm_load_store(p, instruction);
+            return err_instru;
+        }
+        return UNDEFINED_INSTRUCTION;
+    case 0b100: //load/store multiple
+        err_instru = arm_load_store_multiple(p, instruction);
+        return err_instru;
+    case 0b101: //branch and branch with link
+        err_instru = arm_branch(p, instruction);
+        return err_instru;
+    case 0b110: // coprocessor ldr/str and double register transfer
+        err_instru = arm_coprocessor_load_store(p, instruction);
+        return err_instru;
+    case 0b111:
+        if(bit_24 == 0 && bit_4 == 0){ //coprocessor data processing
+            return UNDEFINED_INSTRUCTION;
+        }
+        if(bit_24 == 0 && bit_4 == 1){ //coprocessor register transfers
+            err_instru = arm_coprocessor_load_store(p, instruction);
+            return err_instru;
+        }
+        if(bit_24 == 1 && code != 1){ //software interrupt test de code si code à 1 alors condition == 1111 et on est alors en unconditionnal instructions
+            err_instru = arm_coprocessor_others_swi(p, instruction);
+            return err_instru;
+        }
+        return UNDEFINED_INSTRUCTION;
+    default:
+        return UNDEFINED_INSTRUCTION;
+    }
 }
 
 static int arm_execute_instruction(arm_core p) {
-    uint32_t instruction;
-    int res_fetch = arm_fetch(p, instruction);
+    uint32_t instruction = 0;
+    int res_fetch = arm_fetch(p, &instruction);
     if(res_fetch == -1){
         return -1;
     }
@@ -128,9 +217,8 @@ static int arm_execute_instruction(arm_core p) {
     if(res_cond == -1){
         return -1;
     }
-    int res_decode = arm_instruction_type_decode(p, instruction);
-
-    return 0;
+    int res_decode = arm_instruction_type_decode(p, instruction, res_cond);
+    return res_decode;
 }
 
 int arm_step(arm_core p) {
