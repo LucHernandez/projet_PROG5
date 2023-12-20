@@ -31,6 +31,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins);
 
 int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm);
 int32_t verif_addr_mode(arm_core p,uint32_t ins);
+uint32_t mode_addr_H(arm_core p,uint32_t ins);
 
 int arm_load_store_STR(arm_core p,uint32_t ins);
 int arm_load_store_STRB(arm_core p,uint32_t ins);
@@ -40,6 +41,7 @@ int arm_load_store_LDR(arm_core p,uint32_t ins);
 int arm_load_store_LDRB(arm_core p,uint32_t ins);
 int arm_load_store_LDRH(arm_core p,uint32_t ins);
 int arm_load_store_LDM(arm_core p,uint32_t ins);
+
 
 
 

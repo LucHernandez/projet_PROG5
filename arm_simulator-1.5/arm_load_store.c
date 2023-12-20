@@ -315,7 +315,7 @@ int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
             }
         case 0b11:
             if(Shift_imm == 0){
-                index = (get_bit(arm_read_cpsr(p),29)<<31) || RmVal >> 1;
+                index = (get_bit(arm_read_cpsr(p),29)<<31) | RmVal >> 1;
                 break;
             }
             else{
@@ -329,13 +329,127 @@ int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
     return index;
 }
 
+uint32_t mode_addr_H(arm_core p,uint32_t ins){
+    uint8_t i,pb,w,u;
+    i = get_bit(ins,22);
+    pb = get_bit(ins,24);
+    w = get_bit(ins,21);
+    u = get_bit(ins,23);
+    uint8_t RnNum = get_bits(ins,19,16);
+    int32_t RnVal = arm_read_register(p,RnNum);
+    int32_t result = 0;
+    if(i==1){
+        uint8_t immedH = get_bits(ins,11,8);
+        uint8_t ImmedL = get_bits(ins,3,0);
+        uint8_t offset = (immedH << 4)|ImmedL;;
+        if(pb==0){ // Immediate Post-Indexed p479
+            if(w==0){
+                if(u==1){
+                    result = RnVal + offset;
+                    arm_write_register(p,RnNum,result);
+                    return RnVal;
+                }
+                else{
+                    result = RnVal - offset;
+                    arm_write_register(p,RnNum,result);
+                    return RnVal;
+                }
+            }
+            else{
+                return DATA_ABORT;
+            }
+        }
+        else{
+            if(w==0){// Immediate Offset p475
+                if(u==0){
+                    result = RnVal + offset;
+                    return result;
+                }
+                else{
+                    result = RnVal - offset;
+                    return result;
+                }
+            }
+            else{// Immediate Pre-Indexed p477
+                if(u==1){
+                    result = RnVal + offset;
+                    arm_write_register(p,RnNum,result);
+                    return result;
+                }
+                else{
+                    result = RnVal - offset;
+                    arm_write_register(p,RnNum,result);
+                    return result;
+                }
+            }
+        }
+    }
+    else{
+
+        uint8_t RmNum = get_bits(ins,3,0);
+        uint32_t RmVal = arm_read_register(p,RmNum);
+
+        if(pb==0){// Register Post-Indexed p480
+            if(w==0){
+                if(u==1){
+                    result = RnVal + RmVal;
+                    arm_write_register(p,RnNum,result);
+                    return RnVal;
+                }
+                else{
+                    result = RnVal - RmVal;
+                    arm_write_register(p,RnNum,result);
+                    return RnVal;
+                }
+            }
+            else{
+                return DATA_ABORT;
+            }
+        }
+        else{
+            if(w==0){// Reg Offset p476
+                if(u==1){
+                    result = RnVal + RmVal;
+                    return result;
+                }
+                else{
+                    result = RnVal - RmVal;
+                    return result;
+                }
+            }
+            else{// Reg Pre-Indexed p478
+                if(u==1){
+                    result = RnVal + RmVal;
+                    arm_write_register(p,RnNum,result);
+                    return result;
+                }
+                else{
+                    result = RnVal - RmVal;
+                    arm_write_register(p,RnNum,result);
+                    return result;
+                }
+
+            }
+
+        }
+    }   
+}
+
 
 int arm_load_store_STR(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t addr = 0;
+    uint32_t value = arm_read_register(p,get_bits(ins,15,12));
+    addr=verif_addr_mode(p,ins);
+    arm_write_word(p,addr,value);
+    return 0;
 }
 
 int arm_load_store_STRB(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t addr = 0;
+    uint8_t value = arm_read_register(p,get_bits(ins,15,12));
+    addr=verif_addr_mode(p,ins);    
+    arm_write_byte(p,addr,value);
+    return 0;
 }
 
 int arm_load_store_STRH(arm_core p,uint32_t ins){
