@@ -44,14 +44,14 @@ int verif_addr_mode(arm_core p,uint32_t ins){
     int RnVal = arm_read_register(p,RnNum);
     int result = 0;
 
-    uint8_t i,p,w,u;
+    uint8_t i,pb,w,u;
     i = get_bit(ins,25);
-    p = get_bit(ins,24);
+    pb = get_bit(ins,24);
     w = get_bit(ins,21);
     u = get_bit(ins,23) ;
     if(i==0){ //Cas des immediate
         int offset = get_bits(ins,11,0);
-        if(p==1){ // P==1
+        if(pb==1){ // P==1
             if(w==1){ // Immediate pre-index p464
                 if(RnNum == 15){// Cas UNPREDICTABLE
                     return -1;
@@ -114,10 +114,10 @@ int verif_addr_mode(arm_core p,uint32_t ins){
         int Shift = get_bits(ins,6,5);
         int Shift_imm = get_bits(ins,11,7);
         int index = 0;
-        if(p==1){
+        if(pb==1){
             if(w==1){
                 if(get_bits(ins,11,4)==0){ //Reg pre-indexed p465
-                    if((RmNum || RnNum) == 15){ // Cas UNPREDICTABLE
+                    if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return -1;
                     }
                     if(u==1){
@@ -132,10 +132,10 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     }
                 }
                 else{ //Scaled Reg pre-indexed p466
-                    if((RmNum || RnNum) == 15){ // Cas UNPREDICTABLE
+                    if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return -1;
                     }
-                    index = Shift_case(Shift,RmVal,Shift_imm);
+                    index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
                         arm_write_register(p,(uint8_t)RnNum,result);
@@ -172,7 +172,7 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     if(RmNum == 15){ // Cas UNPREDICTABLE
                         return -1;
                     }
-                    index = Shift_case(Shift,RmVal,Shift_imm);
+                    index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
                         return result;
@@ -195,7 +195,7 @@ int verif_addr_mode(arm_core p,uint32_t ins){
             }
             else{
                 if(get_bits(ins,11,4)==0){ //Reg post-indexed p470
-                    if((RmNum || RnNum) == 15){ // Cas UNPREDICTABLE
+                    if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return -1;
                     }
                     if(u==1){
@@ -210,10 +210,10 @@ int verif_addr_mode(arm_core p,uint32_t ins){
                     }
                 }
                 else{ //Scaled Reg post-indexed p471
-                    if((RmNum || RnNum) == 15){ // Cas UNPREDICTABLE
+                    if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return -1;
                     }
-                    index = Shift_case(Shift,RmVal,Shift_imm);
+                    index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
                         arm_write_register(p,(uint8_t)RnNum,result);
@@ -232,7 +232,8 @@ int verif_addr_mode(arm_core p,uint32_t ins){
 }
 
 
-int Shift_case(int Shift,int Rmval,int Shift_imm){
+int Shift_case(arm_core p,int Shift,int RmVal,int Shift_imm){
+    int index = 0;
     switch(Shift){
         case 0b00:
             index = RmVal << Shift_imm;
@@ -278,34 +279,34 @@ int Shift_case(int Shift,int Rmval,int Shift_imm){
 }
 
 
-arm_load_store_STR(arm_core p,uint32_t ins){
-
+int arm_load_store_STR(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_STRB(arm_core p,uint32_t ins){
-    
+int arm_load_store_STRB(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_STRH(arm_core p,uint32_t ins){
-    
+int arm_load_store_STRH(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_STM(arm_core p,uint32_t ins){
-    
+int arm_load_store_STM(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_LDR(arm_core p,uint32_t ins){
-    
+int arm_load_store_LDR(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_LDRB(arm_core p,uint32_t ins){
-    
+int arm_load_store_LDRB(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_LDRH(arm_core p,uint32_t ins){
-    
+int arm_load_store_LDRH(arm_core p,uint32_t ins){
+    return -1;
 }
 
-arm_load_store_LDM(arm_core p,uint32_t ins){
-    
+int arm_load_store_LDM(arm_core p,uint32_t ins){
+    return -1;
 }
