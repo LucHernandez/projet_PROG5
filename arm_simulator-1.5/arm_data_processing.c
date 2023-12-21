@@ -215,7 +215,7 @@ uint32_t get_shifter_operand_RoR_reg(arm_core p, uint32_t instruction, uint8_t *
 
 // Tous les codes des opérations arithmétiques se ressemblant, on utilisera cette fonction avec les infos
 // récupérées des différentes opérations
-void execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op){
+int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op){
 	// On écrit le résultat dans le registre de destination
 	arm_write_register(p, rd, (uint32_t)res);
 
@@ -224,6 +224,7 @@ void execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8
 			arm_write_cpsr(p, arm_read_spsr(p));
 		} else {
 			// UNPREDICTABLE
+			return -1;
 		}
 	}
 	else if (get_bit(ins, 20) == 1){
@@ -237,6 +238,7 @@ void execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8
 		uint32_t cpsr_left = get_bits(arm_read_cpsr(p), 27, 0);
 		arm_write_cpsr(p, (n+z+c+v+cpsr_left));
 	}
+	return 0;
 }
 
 void execute_sub(arm_core p, uint32_t ins){
@@ -298,6 +300,18 @@ void execute_mov(arm_core p, uint32_t ins){
 	uint8_t carry_out;
 	uint32_t res = get_shifter_operand(p, ins, carry_out);
 
+		execute_moving(p, ins, res, rd);
+}
+
+void execute_mvn(arm_core p, uint32_t ins){
+	uint8_t rd = get_bits(ins, 15, 12);
+	uint8_t carry_out;
+	uint32_t res = ~(get_shifter_operand(p, ins, carry_out));
+
+	execute_moving(p, ins, res, rd);
+}
+
+int execute_moving(arm_core p, uint32_t ins, uint64_t res, uint8_t rd){
 	arm_write_register(p, rd, res);
 
 	if (get_bit(ins, 20) == 1 && rd == 15){
@@ -305,6 +319,7 @@ void execute_mov(arm_core p, uint32_t ins){
 			arm_write_cpsr(p, arm_read_spsr(p));
 		} else {
 			// UNPREDICTABLE
+			return -1;
 		}
 	}
 	else if (get_bit(ins, 20) == 1){
@@ -314,4 +329,5 @@ void execute_mov(arm_core p, uint32_t ins){
 		uint32_t cpsr_left = get_bits(arm_read_cpsr(p), 28, 0);
 		arm_write_cpsr(p, (n+z+c+cpsr_left));
 	}
+	return 0;
 }
