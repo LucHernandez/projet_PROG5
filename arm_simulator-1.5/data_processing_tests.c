@@ -45,11 +45,36 @@ int main() {
 
 
     // TESTS POUR VOIR SI LES DIFFERENTES OPERATIONS IMPLEMENTEES FONCTIONNENT
-    // printf("\nEntering instruction simulation testing...\n");
-    // uint32_t op;
-    // for (unsigned int i = 0; i < 16;  ++i) {
-    //     op = (uint32_t) i << 21;
-    // }
+    printf("\nEntering instruction simulation testing...\n");
+
+    // TESTS AND
+    printf("\nTesting AND...\n");
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_AND(p, 0b00000010000100110000000000000010);
+    printf("AND returns accurate value 1 :        %d\n", arm_read_register(p, 0) == 2);
+    printf("AND changes CPSR according to doc 1 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b000);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_AND(p, 0b00000010000100110000000000000101);
+    printf("AND returns accurate value 2 :        %d\n", arm_read_register(p, 0) == 0);
+    printf("AND changes CPSR according to doc 2 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b010);
+    arm_write_register(p, 0, 0xF0000000);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_AND(p, 0b00000000000100000000000000000000);
+    printf("AND returns accurate value 3 :        %d\n", arm_read_register(p, 0) == 0xF0000000);
+    printf("AND changes CPSR according to doc 3 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b100);
+
+    // TESTS EOR
+    printf("\nTesting EOR...\n");
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_EOR(p, 0b00000000000100000000000000000000);
+    printf("EOR returns accurate value 1 : %d\n", arm_read_register(p, 0) == 0xF0000000);
+    printf("EOR changes CPSR according to doc  : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b100);
+    
+
+
+
+
+
 
 
     registers_destroy(r);

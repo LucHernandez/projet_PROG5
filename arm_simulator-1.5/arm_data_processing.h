@@ -25,6 +25,9 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdint.h>
 #include "arm_core.h"
 
+/**************************
+SECTION OPERATIONS LOGIQUES
+**************************/
 int execute_AND(arm_core p, uint32_t instruction);
 int execute_EOR(arm_core p, uint32_t instruction);
 int execute_TST(arm_core p, uint32_t instruction);
@@ -34,10 +37,9 @@ int execute_CMN(arm_core p, uint32_t instruction);
 int execute_ORR(arm_core p, uint32_t instruction);
 int execute_BIC(arm_core p, uint32_t instruction);
 
-int arm_data_processing_shift(arm_core p, uint32_t ins);
-int arm_data_processing_immediate_msr(arm_core p, uint32_t ins);
-uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
-
+/*******************************
+SECTION OPERATIONS ARITHMETIQUES
+********************************/
 int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op);
 int execute_sub(arm_core p, uint32_t ins);
 int execute_rsb(arm_core p, uint32_t ins);
@@ -48,6 +50,10 @@ int execute_adc(arm_core p, uint32_t ins);
 int execute_mov(arm_core p, uint32_t ins);
 int execute_mvn(arm_core p, uint32_t ins);
 int execute_moving(arm_core p, uint32_t ins, uint64_t res, uint8_t rd);
+
+int arm_data_processing_shift(arm_core p, uint32_t ins);
+int arm_data_processing_immediate_msr(arm_core p, uint32_t ins);
+uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
 
 
 #endif
