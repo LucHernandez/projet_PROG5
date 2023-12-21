@@ -394,11 +394,62 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
     }   
 }
 
+int Number_Of_Set_Bits_In(uint32_t ins){
+    int i;
+    int result = 0;
+    for (i = 0; i <16;++i) result += get_bit(ins,i);
+    return result;
+}
+
+uint8_t addr_mode_M(arm_core p,uint32_t ins,int32_t *start_address,int32_t *end_address){
+    if (get_bit(ins,22) && !arm_current_mode_has_spsr(p)){
+        return DATA_ABORT;
+    }
+
+    uint8_t bit_P_U = get_bits(ins,24,23);
+    uint8_t RnNum = get_bits(ins,19,16);
+    int32_t RnVal = arm_read_register(p,RnNum);
+    uint8_t bit_w = get_bit(ins,21);
+    switch (bit_P_U){
+        case 0b01:
+            *start_address = RnVal;
+            *end_address = RnVal + (Number_Of_Set_Bits_In(ins) * 4) - 4;
+            if (bit_w){
+                arm_write_register(p,RnNum,RnVal + Number_Of_Set_Bits_In(ins) * 4 );
+            }
+            break;
+        case 0b11:
+            *start_address = RnVal + 4;
+            *end_address = RnVal + (Number_Of_Set_Bits_In(ins) * 4);
+            if (bit_w){
+                arm_write_register(p,RnNum,RnVal + Number_Of_Set_Bits_In(ins) * 4 );
+            }
+            break;
+        case 0b00:
+            *start_address = RnVal - (Number_Of_Set_Bits_In(ins) * 4) + 4;
+            *end_address = RnVal ;
+            if (bit_w){
+                arm_write_register(p,RnNum,RnVal - Number_Of_Set_Bits_In(ins) * 4 );
+            }
+            break;
+        case 0b10:
+            *start_address = RnVal - (Number_Of_Set_Bits_In(ins) * 4);
+            *end_address = RnVal - 4;
+            if (bit_w){
+                arm_write_register(p,RnNum,RnVal - Number_Of_Set_Bits_In(ins) * 4 );
+            }
+            break;
+        default:
+            return DATA_ABORT;
+    }
+    return 0;
+}
+
 
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=addr_modeWB(p,ins);
+    addr=addr_mode_WB(p,ins);
     arm_write_word(p,addr,value);
     return 0;
 }
@@ -406,25 +457,72 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=addr_modeWB(p,ins);    
+    addr=addr_mode_WB(p,ins);    
     arm_write_byte(p,addr,value);
     return 0;
 }
 
 int arm_load_store_STRH(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t addr = 0;
+    uint16_t value = arm_read_register(p,get_bits(ins,15,12));
+    addr=addr_mode_H(p,ins);
+    if(get_bit(addr,0)==0){
+        arm_write_half(p,addr,value);
+        return 0;
+    }
+    else{
+        return DATA_ABORT;
+    }
+
 }
 
 int arm_load_store_STM(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t start_address,end_address;
+    uint32_t address;
+    uint32_t value;
+
+    if (addr_mode_M(p,ins,&start_address,&end_address)){
+        return DATA_ABORT;
+    }
+
+    address = start_address;
+    for(int i;i<15;i++){
+            if(get_bit(ins)){
+                value = arm_read_register(p,i);
+                arm_write_word(p,address,value);
+                address += 4;
+            }
+    }
+
+    if (end_address != (address -4)) return DATA_ABORT;
+    return 0;
 }
 
 int arm_load_store_LDR(arm_core p,uint32_t ins){
-    return -1;
+    int32_t address = verif_addr_mode(p,ins);
+
+    uint32_t *value = NULL;
+    int data =ror(arm_read_word(p,address,value),8*get_bits(address,1,0));
+
+    if (get_bits(ins,15,12) == 15){
+        arm_write_register(p,15,data & 0xFFFFFFFE);
+        arm_write_cpsr(p,set_bits(arm_read_cpsr(p),5,5,get_bit(data,0)));
+    }
+    else{
+        arm_write_register(p,get_bits(ins,15,12),data);
+    }
+    
+    return 0;
 }
 
 int arm_load_store_LDRB(arm_core p,uint32_t ins){
-    return -1;
+    // Rd = Memory[address,1]
+    int32_t address = verif_addr_mode(p,ins);
+    uint8_t *value = NULL;
+
+    arm_read_byte(p,address,value);
+    arm_write_register(p,get_bits(ins,15,12),*value);
+    return 0;
 }
 
 int arm_load_store_LDRH(arm_core p,uint32_t ins){
@@ -432,5 +530,33 @@ int arm_load_store_LDRH(arm_core p,uint32_t ins){
 }
 
 int arm_load_store_LDM(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t start_address,end_address;
+    uint32_t address;
+
+    if (addr_mode_M(p,ins,&start_address,&end_address)){
+        return DATA_ABORT;
+    }
+
+    address = start_address;
+    int i;
+    uint32_t *value = NULL;
+    
+    for (i = 0; i< 15; ++i){
+        if (get_bit(ins,i)){
+            arm_read_word(p,address,value);
+            arm_write_register(p,i,*value);
+            address +=4;
+        }
+    }
+
+    if (get_bit(ins,15)){
+        *value = arm_read_word(p,address,value);
+        arm_write_register(p,15,*value & 0xFFFFFFFE);
+        arm_write_cpsr(p,set_bits(arm_read_cpsr(p),5,5,get_bit(*value,0)));
+
+        address +=4;
+    }
+
+    if (end_address != (address -4)) return DATA_ABORT;
+    return 0;
 }
