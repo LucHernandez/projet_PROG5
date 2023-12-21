@@ -38,4 +38,16 @@ int arm_data_processing_shift(arm_core p, uint32_t ins);
 int arm_data_processing_immediate_msr(arm_core p, uint32_t ins);
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
 
+int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op);
+int execute_sub(arm_core p, uint32_t ins);
+int execute_rsb(arm_core p, uint32_t ins);
+int execute_sbc(arm_core p, uint32_t ins);
+int execute_rsc(arm_core p, uint32_t ins);
+int execute_add(arm_core p, uint32_t ins);
+int execute_adc(arm_core p, uint32_t ins);
+int execute_mov(arm_core p, uint32_t ins);
+int execute_mvn(arm_core p, uint32_t ins);
+int execute_moving(arm_core p, uint32_t ins, uint64_t res, uint8_t rd);
+
+
 #endif
