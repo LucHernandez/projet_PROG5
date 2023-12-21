@@ -1,24 +1,24 @@
 /*
-Armator - simulateur de jeu d'instruction ARMv5T à but pédagogique
+Armator - simulateur de jeu d'instruction ARMv5T ï¿½ but pï¿½dagogique
 Copyright (C) 2011 Guillaume Huard
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software
-Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).
+termes de la Licence Publique Gï¿½nï¿½rale GNU publiï¿½e par la Free Software
+Foundation (version 2 ou bien toute autre version ultï¿½rieure choisie par vous).
 
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE
+Ce programme est distribuï¿½ car potentiellement utile, mais SANS AUCUNE
 GARANTIE, ni explicite ni implicite, y compris les garanties de
-commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la
-Licence Publique Générale GNU pour plus de détails.
+commercialisation ou d'adaptation dans un but spï¿½cifique. Reportez-vous ï¿½ la
+Licence Publique Gï¿½nï¿½rale GNU pour plus de dï¿½tails.
 
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même
-temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software
+Vous devez avoir reï¿½u une copie de la Licence Publique Gï¿½nï¿½rale GNU en mï¿½me
+temps que ce programme ; si ce n'est pas le cas, ï¿½crivez ï¿½ la Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
-États-Unis.
+ï¿½tats-Unis.
 
 Contact: Guillaume.Huard@imag.fr
-	 Bâtiment IMAG
+	 Bï¿½timent IMAG
 	 700 avenue centrale, domaine universitaire
-	 38401 Saint Martin d'Hères
+	 38401 Saint Martin d'Hï¿½res
 */
 #include "arm_load_store.h"
 #include "arm_exception.h"
@@ -26,12 +26,120 @@ Contact: Guillaume.Huard@imag.fr
 #include "util.h"
 #include "debug.h"
 
-int arm_load_store(arm_core p, uint32_t ins) {
+int STR(arm_core p, uint32_t ins){
     return UNDEFINED_INSTRUCTION;
 }
 
-int arm_load_store_multiple(arm_core p, uint32_t ins) {
+int STRB(arm_core p, uint32_t ins){
     return UNDEFINED_INSTRUCTION;
+}
+
+int STRH(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int STM(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int LDR(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int LDRB(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int LDRH(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int LDM(arm_core p, uint32_t ins){
+    return UNDEFINED_INSTRUCTION;
+}
+
+int arm_load_store(arm_core p, uint32_t ins) {
+    int bits_27_25 = get_bits(ins, 27,25);
+    int bit_22 = get_bit(ins, 22);
+    int bit_20 = get_bit(ins, 20);
+    int bits_7_4 = get_bits(ins, 7, 4);
+
+    int err_instru;
+    switch (bits_27_25)
+    {
+    case 0b000:
+        if (bits_7_4 == 0b1011)
+        { // load/store hexa
+            if (bit_20 == 0)
+            { // store hexa
+                err_instru = STRH(p, ins);
+                return err_instru;
+                }
+                else{ //load hexa
+                    err_instru = LDRH(p, ins);
+                    return err_instru;
+                }
+            }
+            return UNDEFINED_INSTRUCTION;
+        case 0b010:
+            if(bit_20 == 0){ //store
+                if(bit_22 == 0){ //store word
+                    err_instru = STR(p, ins);
+                    return err_instru;
+                }
+                else{ //store byte
+                    err_instru = STRB(p, ins);
+                    return err_instru;
+                }
+            }
+            else{ //load
+                if(bit_22 == 0){ //load word
+                    err_instru = LDR(p, ins);
+                    return err_instru;
+                }
+                else{ //load byte
+                    err_instru = LDRB(p, ins);
+                    return err_instru;
+                }
+            }
+        case 0b011:
+            if(bit_20 == 0){ //store
+                if(bit_22 == 0){ //store word
+                    err_instru = STR(p, ins);
+                    return err_instru;
+                }
+                else{ //store byte
+                    err_instru = STRB(p, ins);
+                    return err_instru;
+                }
+            }
+            else{ //load
+                if(bit_22 == 0){ //load word
+                    err_instru = LDR(p, ins);
+                    return err_instru;
+                }
+                else{ //load byte
+                    err_instru = LDRB(p, ins);
+                    return err_instru;
+                }
+            }
+        default:
+            return UNDEFINED_INSTRUCTION;
+        }
+}
+
+int arm_load_store_multiple(arm_core p, uint32_t ins) {
+    int bit_20 = get_bit(ins, 20);
+
+    int err_instru;
+    if (bit_20 == 0){ //store multiple
+        err_instru = STM(p, ins);
+        return err_instru;
+    }
+    else{
+        err_instru = LDM(p, ins); //load multiple
+        return err_instru;
+    }
 }
 
 int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
