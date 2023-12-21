@@ -39,7 +39,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
-uint8_t mode_addr_WB(arm_core p,uint32_t ins,uint32_t *addr){
+uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t RnNum = get_bits(ins,19,16);
     uint32_t RnVal = arm_read_register(p,RnNum);
     uint32_t result = 0;
@@ -296,7 +296,7 @@ int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
     return index;
 }
 
-uint8_t mode_addr_H(arm_core p,uint32_t ins,uint32_t *addr){
+uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t i,pb,w,u;
     i = get_bit(ins,22);
     pb = get_bit(ins,24);
@@ -596,7 +596,7 @@ int arm_load_store_LDRH(arm_core p,uint32_t ins){
     if get_bit(address,0){
         arm_read_half(p,address,&data);
     }
-    arm_write_register(p,get_bits(ins,15,12),((uint32_t) 0 | data));
+    arm_write_register(p,get_bits(ins,15,12),((uint32_t) 0 |(uint32_t) data));
     return 0;
 }
 
