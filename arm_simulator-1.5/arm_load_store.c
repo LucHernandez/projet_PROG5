@@ -52,7 +52,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
     if(i==0){ //Cas des immediate
         int offset = get_bits(ins,11,0);
         if(pb==1){ // P==1
-            if(w==1){ // Immediate pre-index p464
+            if(w==1){ // Immediate pre-index p464 W=1,P=1,I=0
                 if(RnNum == 15){// Cas UNPREDICTABLE
                     return DATA_ABORT;
                 }
@@ -69,7 +69,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                     return 0;
                 }
             }
-            else{ //Immediate offset p460
+            else{ //Immediate offset p460 W=0,P=1,I=0
                 if(RnNum == 15){
                     RnVal = RnVal + 8;  
                 }
@@ -86,7 +86,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
             }
         }
         else{ //P==0
-            if(w==1){ //cas des LDRBT,STRBT etc check bit W p468 et surtout 469
+            if(w==1){ //Cas des LDRBT,STRBT etc (pas a faire pour le moment) check bit W p468 et surtout 469 W=0,P=0,I=0
                 if(u==1){ // U==1
                     return UNDEFINED_INSTRUCTION;
                 }
@@ -94,7 +94,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                     return UNDEFINED_INSTRUCTION;
                 }
             }
-            else{ // Immediate post-index p464
+            else{ // Immediate post-index p464 W=0,P=1,I=0
                 if(RnNum == 15){ // Cas UNPREDICTABLE
                     return DATA_ABORT;
                 }
@@ -122,7 +122,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
         int index = 0;
         if(pb==1){
             if(w==1){
-                if(get_bits(ins,11,4)==0){ //Reg pre-indexed p465
+                if(get_bits(ins,11,4)==0){ //Reg pre-indexed p465 W=1,P=1,I=1 et les bits 11 à 4 == 0
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return DATA_ABORT;
                     }
@@ -139,7 +139,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                         return 0;
                     }
                 }
-                else{ //Scaled Reg pre-indexed p466
+                else{ //Scaled Reg pre-indexed p466 W=1,P=1,I=1 et les bits 11 à 4 != 0
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return DATA_ABORT;
                     }
@@ -159,7 +159,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                 }
             }
             else{
-                if(get_bits(ins,11,4)==0){ //Reg offset p461
+                if(get_bits(ins,11,4)==0){ //Reg offset p461 W=0,P=1,I=1 et les bits 11 à 4 == 0
                     if(RnNum == 15){
                         RnVal = RnVal + 8;;
                     }
@@ -177,7 +177,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                         return 0;
                     }
                 }
-                else{ //Scaled Reg offset p462
+                else{ //Scaled Reg offset p462 W=0,P=1,I=1 et les bits 11 à 4 != 0
                     if(RnNum == 15){
                         RnVal = RnVal + 8;
                     }
@@ -199,7 +199,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
             }
         }
         else{
-            if(w==1){ //cas des LDRBT,STRBT etc check bit W p470 ou 471
+            if(w==1){ //Cas des LDRBT,STRBT etc (pas a faire pour le moment) check bit W p470 ou 471 W=1,P=0,I=1
                 if(u==1){ // U==1
                     return UNDEFINED_INSTRUCTION;
                 }
@@ -208,7 +208,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                 }
             }
             else{
-                if(get_bits(ins,11,4)==0){ //Reg post-indexed p470
+                if(get_bits(ins,11,4)==0){ //Reg post-indexed p470 W=0,P=0,I=1 et les bits 11 à 4 == 0
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return DATA_ABORT;
                     }
@@ -225,7 +225,7 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
                         return 0;
                     }
                 }
-                else{ //Scaled Reg post-indexed p471
+                else{ //Scaled Reg post-indexed p471 W=0,P=0,I=1 et les bits 11 à 4 != 0
                     if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
                         return DATA_ABORT;
                     }
