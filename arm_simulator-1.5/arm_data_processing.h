@@ -25,6 +25,15 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdint.h>
 #include "arm_core.h"
 
+int execute_AND(arm_core p, uint32_t instruction);
+int execute_EOR(arm_core p, uint32_t instruction);
+int execute_TST(arm_core p, uint32_t instruction);
+int execute_TEQ(arm_core p, uint32_t instruction);
+int execute_CMP(arm_core p, uint32_t instruction);
+int execute_CMN(arm_core p, uint32_t instruction);
+int execute_ORR(arm_core p, uint32_t instruction);
+int execute_BIC(arm_core p, uint32_t instruction);
+
 int arm_data_processing_shift(arm_core p, uint32_t ins);
 int arm_data_processing_immediate_msr(arm_core p, uint32_t ins);
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
