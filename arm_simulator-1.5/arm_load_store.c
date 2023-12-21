@@ -54,7 +54,7 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
         if(pb==1){ // P==1
             if(w==1){ // Immediate pre-index p464
                 if(RnNum == 15){// Cas UNPREDICTABLE
-                    return -1;
+                    return DATA_ABORT;
                 }
                 if(u==1){
                     result = RnVal + offset;
@@ -63,9 +63,6 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                 }
                 else{
                     result = RnVal - offset;
-                    if(result < 0){
-                        return -1;
-                    }
                     arm_write_register(p,RnNum,result);
                     return result;
                 }
@@ -76,16 +73,10 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                 }
                 if(u==1){ // U==1
                     result = RnVal + offset;
-                    if(result < 0){
-                        return -1;
-                    }
                     return result;
                 }
                 else{ // U==0
                     result = RnVal - offset;
-                    if(result < 0){
-                        return -1;
-                    }
                     return result;
                 }  
             }
