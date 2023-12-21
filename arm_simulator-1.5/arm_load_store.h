@@ -30,9 +30,9 @@ int arm_load_store_multiple(arm_core p, uint32_t ins);
 int arm_coprocessor_load_store(arm_core p, uint32_t ins);
 
 int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm);
-uint32_t mode_addr_WB(arm_core p,uint32_t ins);
-uint32_t mode_addr_H(arm_core p,uint32_t ins);
-uint8_t addr_mode_M(arm_core p,uint32_t ins,int32_t *start_address,int32_t *end_address);
+uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr);
+uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr);
+uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address);
 
 
 int arm_load_store_STR(arm_core p,uint32_t ins);

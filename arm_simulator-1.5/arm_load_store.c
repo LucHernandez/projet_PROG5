@@ -39,7 +39,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
-uint32_t mode_addr_WB(arm_core p,uint32_t ins){
+uint8_t mode_addr_WB(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t RnNum = get_bits(ins,19,16);
     uint32_t RnVal = arm_read_register(p,RnNum);
     uint32_t result = 0;
@@ -59,12 +59,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                 if(u==1){
                     result = RnVal + offset;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{
                     result = RnVal - offset;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
             }
             else{ //Immediate offset p460
@@ -73,11 +75,13 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                 }
                 if(u==1){ // U==1
                     result = RnVal + offset;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{ // U==0
                     result = RnVal - offset;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }  
             }
         }
@@ -97,12 +101,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                 if(u==1){ // U==1
                     result = RnVal + offset;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
                 else{ // U==0
                     result = RnVal - offset;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
             }
 
@@ -123,12 +129,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     if(u==1){
                         result = RnVal + RmVal;
                         arm_write_register(p,RnNum,result);
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                     else{
                         result = RnVal - RmVal;
                         arm_write_register(p,RnNum,result);
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                 }
                 else{ //Scaled Reg pre-indexed p466
@@ -139,12 +147,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     if(u==1){
                         result = RnVal + index;
                         arm_write_register(p,RnNum,result);
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                     else{
                         result = RnVal - index;
                         arm_write_register(p,RnNum,result);
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                 }
             }
@@ -158,12 +168,13 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     }
                     if(u==1){
                         result = RnVal + RmVal;
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                     else{
                         result = RnVal - RmVal;
-    
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                 }
                 else{ //Scaled Reg offset p462
@@ -176,11 +187,13 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     index = Shift_case(p,Shift,RmVal,Shift_imm);
                     if(u==1){
                         result = RnVal + index;
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                     else{
                         result = RnVal - index;
-                        return result;
+                        *addr = result;
+                        return 0;
                     }
                 }
             }
@@ -202,12 +215,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     if(u==1){
                         result = RnVal + RmVal;
                         arm_write_register(p,RnNum,result);
-                        return RnVal;
+                        *addr = RnVal;
+                        return 0;
                     }
                     else{
                         result = RnVal - RmVal;
                         arm_write_register(p,RnNum,result);
-                        return RnVal;
+                        *addr = RnVal;
+                        return 0;
                     }
                 }
                 else{ //Scaled Reg post-indexed p471
@@ -218,12 +233,14 @@ uint32_t mode_addr_WB(arm_core p,uint32_t ins){
                     if(u==1){
                         result = RnVal + index;
                         arm_write_register(p,RnNum,result);
-                        return RnVal;
+                        *addr = RnVal;
+                        return 0;
                     }
                     else{
                         result = RnVal - index;
                         arm_write_register(p,RnNum,result);
-                        return RnVal;
+                        *addr = RnVal;
+                        return 0;
                     }
                 }
             }
@@ -279,7 +296,7 @@ int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
     return index;
 }
 
-uint32_t mode_addr_H(arm_core p,uint32_t ins){
+uint8_t mode_addr_H(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t i,pb,w,u;
     i = get_bit(ins,22);
     pb = get_bit(ins,24);
@@ -292,17 +309,22 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
         uint8_t immedH = get_bits(ins,11,8);
         uint8_t ImmedL = get_bits(ins,3,0);
         uint8_t offset = (immedH << 4)|ImmedL;;
-        if(pb==0){ // Immediate Post-Indexed p479
-            if(w==0){
+        if(pb==0){ 
+            if(w==0){ // Immediate Post-Indexed p479
+                if(RnNum == 15){
+                    return DATA_ABORT;
+                }
                 if(u==1){
                     result = RnVal + offset;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
                 else{
                     result = RnVal - offset;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
             }
             else{
@@ -311,25 +333,35 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
         }
         else{
             if(w==0){// Immediate Offset p475
+                if(RnNum == 15){
+                    RnVal = RnVal + 8;
+                }
                 if(u==0){
                     result = RnVal + offset;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{
                     result = RnVal - offset;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
             }
             else{// Immediate Pre-Indexed p477
+                if(RnNum == 15 ){
+                    return DATA_ABORT;
+                }
                 if(u==1){
                     result = RnVal + offset;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{
                     result = RnVal - offset;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
             }
         }
@@ -339,17 +371,25 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
         uint8_t RmNum = get_bits(ins,3,0);
         uint32_t RmVal = arm_read_register(p,RmNum);
 
-        if(pb==0){// Register Post-Indexed p480
-            if(w==0){
+        if(pb==0){
+            if(w==0){// Register Post-Indexed p480
+                if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
+                    return DATA_ABORT;
+                }
+                if(RmNum==RnNum){
+                    return DATA_ABORT;
+                }
                 if(u==1){
                     result = RnVal + RmVal;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
                 else{
                     result = RnVal - RmVal;
                     arm_write_register(p,RnNum,result);
-                    return RnVal;
+                    *addr = RnVal;
+                    return 0;
                 }
             }
             else{
@@ -358,25 +398,41 @@ uint32_t mode_addr_H(arm_core p,uint32_t ins){
         }
         else{
             if(w==0){// Reg Offset p476
+                if(RnNum == 15){
+                    RnVal = RnVal + 8;;
+                }
+                if(RmNum == 15){ // Cas UNPREDICTABLE
+                    return DATA_ABORT;
+                }
                 if(u==1){
                     result = RnVal + RmVal;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{
                     result = RnVal - RmVal;
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
             }
             else{// Reg Pre-Indexed p478
+                if((RmNum == 15) || (RnNum == 15)){ // Cas UNPREDICTABLE
+                    return DATA_ABORT;
+                }
+                if(RmNum==RnNum){
+                    return DATA_ABORT;
+                }
                 if(u==1){
                     result = RnVal + RmVal;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
                 else{
                     result = RnVal - RmVal;
                     arm_write_register(p,RnNum,result);
-                    return result;
+                    *addr = result;
+                    return 0;
                 }
 
             }
@@ -392,7 +448,7 @@ int Number_Of_Set_Bits_In(uint32_t ins){
     return result;
 }
 
-uint8_t addr_mode_M(arm_core p,uint32_t ins,int32_t *start_address,int32_t *end_address){
+uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address){
     if (get_bit(ins,22) && !arm_current_mode_has_spsr(p)){
         return DATA_ABORT;
     }
@@ -438,9 +494,11 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,int32_t *start_address,int32_t *end_
 
 
 int arm_load_store_STR(arm_core p,uint32_t ins){
-    uint32_t addr = 0;
+    uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=addr_mode_WB(p,ins);
+    if(addr_mode_WB(p,ins,&addr)){
+        return DATA_ABORT;
+    }
     arm_write_word(p,addr,value);
     return 0;
 }
@@ -448,7 +506,9 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=addr_mode_WB(p,ins);    
+    if(addr_mode_WB(p,ins,&addr)){
+        return DATA_ABORT;
+    }    
     arm_write_byte(p,addr,value);
     return 0;
 }
@@ -456,7 +516,9 @@ int arm_load_store_STRB(arm_core p,uint32_t ins){
 int arm_load_store_STRH(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint16_t value = arm_read_register(p,get_bits(ins,15,12));
-    addr=addr_mode_H(p,ins);
+    if(addr_mode_H(p,ins,&addr)){
+        return DATA_ABORT;
+    }
     if(get_bit(addr,0)==0){
         arm_write_half(p,addr,value);
         return 0;
@@ -478,7 +540,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 
     address = start_address;
     for(int i;i<15;i++){
-            if(get_bit(ins)){
+            if(get_bit(ins,i)){
                 value = arm_read_register(p,i);
                 arm_write_word(p,address,value);
                 address += 4;
@@ -490,7 +552,11 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 }
 
 int arm_load_store_LDR(arm_core p,uint32_t ins){
-    int32_t address = verif_addr_mode(p,ins);
+    uint32_t address;
+
+    if(addr_mode_WB(p,ins,&address)){
+        return DATA_ABORT;
+    }
 
     uint32_t *value = NULL;
     int data =ror(arm_read_word(p,address,value),8*get_bits(address,1,0));
@@ -508,7 +574,12 @@ int arm_load_store_LDR(arm_core p,uint32_t ins){
 
 int arm_load_store_LDRB(arm_core p,uint32_t ins){
     // Rd = Memory[address,1]
-    int32_t address = verif_addr_mode(p,ins);
+    uint32_t address = 0;
+
+    if(addr_mode_WB(p,ins,&address)){
+        return DATA_ABORT;
+    }
+
     uint8_t *value = NULL;
 
     arm_read_byte(p,address,value);
@@ -517,7 +588,16 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
 }
 
 int arm_load_store_LDRH(arm_core p,uint32_t ins){
-    return -1;
+    uint32_t address;
+    if(addr_mode_H(p,ins,&address)){
+        return DATA_ABORT;
+    }
+    uint16_t data = 0;
+    if get_bit(address,0){
+        arm_read_half(p,address,&data);
+    }
+    arm_write_register(p,get_bits(ins,15,12),((uint32_t) 0 | data));
+    return 0;
 }
 
 int arm_load_store_LDM(arm_core p,uint32_t ins){
