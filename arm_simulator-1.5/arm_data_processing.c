@@ -130,6 +130,8 @@ int execute_CMN(arm_core p, uint32_t instruction) {
 	uint8_t carry = (uint64_t) alu_out != comparateur;
 	uint8_t overflow = (get_bit(v1, 31) == get_bit(v2, 31) && get_bit(alu_out, 31) != get_bit(v2, 31));
 	uint32_t flags = ((get_bit(alu_out, 31)) << 3) | ((alu_out == 0 ? 1 : 0) << 2) | ((get_bit(carry, 0)) << 1) | (get_bit(overflow, 0));
+	uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b111) << 29);
+	arm_write_cpsr(p, cpsr | flags << 28);
 	return 0;
 }
 
@@ -149,6 +151,7 @@ int execute_ORR(arm_core p, uint32_t instruction) {
 			arm_write_cpsr(p, cpsr | flags << 28);
 		}
 	}
+	return 0;
 }
 
 int execute_BIC(arm_core p, uint32_t instruction) {
@@ -167,6 +170,7 @@ int execute_BIC(arm_core p, uint32_t instruction) {
 			arm_write_cpsr(p, cpsr | flags << 28);
 		}
 	}
+	return 0;
 }
 
 //
@@ -419,8 +423,7 @@ void execute_adc(arm_core p, uint32_t ins){
 
 void execute_mov(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
-	uint8_t carry_out;
-	uint32_t res = get_shifter_operand(p, ins, carry_out);
+	uint32_t res = get_shifter_operand(p, ins, NULL);
 
 	arm_write_register(p, rd, res);
 
