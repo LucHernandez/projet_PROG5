@@ -29,14 +29,23 @@ int arm_load_store(arm_core p, uint32_t ins);
 int arm_load_store_multiple(arm_core p, uint32_t ins);
 int arm_coprocessor_load_store(arm_core p, uint32_t ins);
 
-int STR(arm_core p, uint32_t ins);
-int STRB(arm_core p, uint32_t ins);
-int STRH(arm_core p, uint32_t ins);
-int STM(arm_core p, uint32_t ins);
+int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm);
+uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr);
+uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr);
+uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address);
+int Number_Of_Set_Bits_In(uint32_t ins);
 
-int LDR(arm_core p, uint32_t ins);
-int LDRB(arm_core p, uint32_t ins);
-int LDRH(arm_core p, uint32_t ins);
-int LDM(arm_core p, uint32_t ins);
- 
+
+int arm_load_store_STR(arm_core p,uint32_t ins);
+int arm_load_store_STRB(arm_core p,uint32_t ins);
+int arm_load_store_STRH(arm_core p,uint32_t ins);
+int arm_load_store_STM(arm_core p,uint32_t ins);
+int arm_load_store_LDR(arm_core p,uint32_t ins);
+int arm_load_store_LDRB(arm_core p,uint32_t ins);
+int arm_load_store_LDRH(arm_core p,uint32_t ins);
+int arm_load_store_LDM(arm_core p,uint32_t ins);
+
+
+
+
 #endif
