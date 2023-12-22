@@ -324,7 +324,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
     }
 
     switch(bits_wpu){
-        case 0b101:
+        case 0b101: //Offset +
             if(index != 0){
                 result = RnVal + index;
                 *addr = result;
@@ -335,7 +335,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
             *addr = result;
             return 0;
 
-        case 0b100:
+        case 0b100: //Offset -
             if(index != 0){
                 result = RnVal - index;
                 *addr = result;
@@ -346,7 +346,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
             *addr = result;
             return 0;
 
-        case 0b111:
+        case 0b111: //Pre-index +
             if(index != 0){
                 result = RnVal + index;
                 arm_write_register(p,RnNum,result);
@@ -359,7 +359,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
             *addr = result;
             return 0;
 
-        case 0b110:
+        case 0b110: //Pre-index -
             if(index != 0){
                 result = RnVal - index;
                 arm_write_register(p,RnNum,result);
@@ -372,7 +372,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
             *addr = result;
             return 0;
 
-        case 0b001:
+        case 0b001: //Post-index +
             if(index != 0){
                 result = RnVal + index;
                 arm_write_register(p,RnNum,result);
@@ -384,7 +384,7 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
             *addr = RnVal;
             return 0;
 
-        case 0b000:
+        case 0b000: //Post-index -
             if(index != 0){
                 result = RnVal - index;
                 arm_write_register(p,RnNum,result);
