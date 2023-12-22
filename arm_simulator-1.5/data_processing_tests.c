@@ -7,6 +7,19 @@
 #include "memory.h"
 #include "arm_core.h"
 
+/*
+
+***************************************************************
+
+ALORS
+IL EST 2H DU MATIN ET JE VIENS DE ME RENDRE COMPTE QUE JE N'AI PAS BESOIN DE TESTER LES FLAGS POUR
+TOUTES LES INCTRUCTIONS ARITHMETIQUES PARCE QUE KEVIN A EU L'EXCELLENTE IDEE DE CREER UNE FONCTION
+POUR FAIRE LES FLAGS
+SOYEZ COMME KEVIN
+
+***************************************************************
+
+*/
 
 int main() {
     memory m = memory_create(32);
@@ -46,6 +59,7 @@ int main() {
 
     // TESTS POUR VOIR SI LES DIFFERENTES OPERATIONS IMPLEMENTEES FONCTIONNENT
     printf("\nEntering instruction simulation testing...\n");
+    printf("\nFlag setting works the same for AND, EOR, ORR and BIC\nFlag setting works the same for TEQ and TST\nFlag setting works the same for every arithmetic operation\n");
 
     // TESTS AND
     printf("\nTesting AND...\n");
@@ -67,16 +81,48 @@ int main() {
     printf("\nTesting EOR...\n");
     ///////////////////////I////SRn  Rd  Shifter_oper
     execute_EOR(p, 0b00000000000100000000000000000000);
-    printf("EOR returns accurate value 1 : %d\n", arm_read_register(p, 0) == 0xF0000000);
-    printf("EOR changes CPSR according to doc  : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b100);
+    printf("EOR returns accurate value 1 :        %d\n", arm_read_register(p, 0) == 0x00000000);
+    arm_write_register(p, 0, 0xF0000000);
+    arm_write_register(p, 1, 0xF000000F);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_EOR(p, 0b00000000000100000010000000000001);
+    printf("EOR returns accurate value 2 :        %d\n", arm_read_register(p, 2) == 0x0000000F);
+
     
+    // TESTS SUB
+    printf("\nTesting SUB...\n");
+    arm_write_register(p, 0, 0xF0000000);
+    arm_write_register(p, 1, 0xF000000F);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_sub(p, 0b00000000000100010010000000000000);
+    printf("SUB returns accurate value 1 :        %d\n", arm_read_register(p, 2) == 0x0000000F);
+    printf("SUB changes CPSR according to doc 1 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b000);
+    arm_write_register(p, 0, 0x00000000);
+    arm_write_register(p, 1, 0x0000000F);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_sub(p, 0b00000000000100000010000000000001);
+    printf("SUB returns accurate value 2 :        %d\n", arm_read_register(p, 2) == -15);
+    printf("SUB changes CPSR according to doc 2 : %d\n", get_bits(arm_read_cpsr(p), 31, 28) == 0b1011);
 
+    // TESTS RSB
+    printf("\nTesting RSB...\n");
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_rsb(p, 0b00000000000100000010000000000001);
+    printf("RSB returns accurate value 1 :        %d\n", arm_read_register(p, 2) == 0x0000000F);
+    printf("RSB changes CPSR according to doc 1 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b000);
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_rsb(p, 0b00000000000100010010000000000000);
+    printf("RSB returns accurate value 2 :        %d\n", arm_read_register(p, 2) == -15);
+    printf("RSB changes CPSR according to doc 2 : %d\n", get_bits(arm_read_cpsr(p), 31, 28) == 0b1011);
 
+    // TESTS MOV
+    printf("\nTesting MOV...\n");
+    ///////////////////////I////SRn  Rd  Shifter_oper
+    execute_mov(p, 0b00000000000100000010000000000001);
+    printf("MOV actually moves. wow... :          %d\n", arm_read_register(p, 2) == arm_read_register(p, 1));
 
-
-
-
-
+    // TESTS
+    
     registers_destroy(r);
     memory_destroy(m);
     arm_destroy(p);
