@@ -27,21 +27,5 @@ Contact: Guillaume.Huard@imag.fr
 
 int arm_data_processing_instructions(arm_core p, uint32_t ins);
 
-int AND(arm_core p, uint32_t ins);
-int EOR(arm_core p, uint32_t ins);
-int SUB(arm_core p, uint32_t ins);
-int RSB(arm_core p, uint32_t ins);
-int ADD(arm_core p, uint32_t ins);
-int ADC(arm_core p, uint32_t ins);
-int SBC(arm_core p, uint32_t ins);
-int RSC(arm_core p, uint32_t ins);
-int TST(arm_core p, uint32_t ins);
-int TEQ(arm_core p, uint32_t ins);
-int CMP(arm_core p, uint32_t ins);
-int CMN(arm_core p, uint32_t ins);
-int ORR(arm_core p, uint32_t ins);
-int MOV(arm_core p, uint32_t ins);
-int BIC(arm_core p, uint32_t ins);
-int MVN(arm_core p, uint32_t ins);
 
 #endif

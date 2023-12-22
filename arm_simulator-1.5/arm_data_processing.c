@@ -27,54 +27,6 @@ Contact: Guillaume.Huard@imag.fr
 #include "util.h"
 #include "debug.h"
 
-int AND(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int EOR(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int SUB(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int RSB(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int ADD(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int ADC(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int SBC(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int RSC(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int TST(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int TEQ(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int CMP(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int CMN(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int ORR(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int MOV(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int BIC(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int MVN(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
 
 /* Decoding functions for different classes of instructions */
 int arm_data_processing_instructions(arm_core p, uint32_t ins) {
