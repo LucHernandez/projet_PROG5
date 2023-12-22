@@ -116,6 +116,9 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     return UNDEFINED_INSTRUCTION;
 }
 
+
+/*FONCTION POUR LES ADDR_MODE*/
+
 uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t RnNum = get_bits(ins,19,16);
     uint32_t RnVal = arm_read_register(p,RnNum);
@@ -327,52 +330,6 @@ uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr){
 }
 
 
-int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
-    int index = 0;
-    switch(Shift){
-        case 0b00:
-            index = RmVal << Shift_imm;
-            break;
-        case 0b01:
-            if(Shift_imm == 0){
-                index = 0;
-                break;
-            }
-            else{
-                index = RmVal >> Shift_imm;
-                break;
-            }
-        case 0b10:
-            if(Shift_imm == 0){
-                if(get_bit(RmVal,31)== 1){
-                    index = 0xFFFFFFFF;
-                    break;
-                }
-                else{
-                    index = 0;
-                    break;
-                }
-            }
-            else{
-                index = asr(RmVal,Shift_imm);
-                break;
-            }
-        case 0b11:
-            if(Shift_imm == 0){
-                index = (get_bit(arm_read_cpsr(p),29)<<31) | RmVal >> 1;
-                break;
-            }
-            else{
-                index = ror(RmVal,Shift_imm);
-                break;
-            }
-        default:
-            printf("peu pas ton b 2 dan");
-            break;
-    }
-    return index;
-}
-
 uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t i,pb,w,u;
     i = get_bit(ins,22);
@@ -518,13 +475,6 @@ uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     }   
 }
 
-int Number_Of_Set_Bits_In(uint32_t ins){
-    int i;
-    int result = 0;
-    for (i = 0; i <16;++i) result += get_bit(ins,i);
-    return result;
-}
-
 uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address){
     if (get_bit(ins,22) && !arm_current_mode_has_spsr(p)){
         return DATA_ABORT;
@@ -569,7 +519,62 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *en
     return 0;
 }
 
+/**/
 
+int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
+    int index = 0;
+    switch(Shift){
+        case 0b00:
+            index = RmVal << Shift_imm;
+            break;
+        case 0b01:
+            if(Shift_imm == 0){
+                index = 0;
+                break;
+            }
+            else{
+                index = RmVal >> Shift_imm;
+                break;
+            }
+        case 0b10:
+            if(Shift_imm == 0){
+                if(get_bit(RmVal,31)== 1){
+                    index = 0xFFFFFFFF;
+                    break;
+                }
+                else{
+                    index = 0;
+                    break;
+                }
+            }
+            else{
+                index = asr(RmVal,Shift_imm);
+                break;
+            }
+        case 0b11:
+            if(Shift_imm == 0){
+                index = (get_bit(arm_read_cpsr(p),29)<<31) | RmVal >> 1;
+                break;
+            }
+            else{
+                index = ror(RmVal,Shift_imm);
+                break;
+            }
+        default:
+            printf("peu pas ton b 2 dan");
+            break;
+    }
+    return index;
+}
+
+int Number_Of_Set_Bits_In(uint32_t ins){
+    int i;
+    int result = 0;
+    for (i = 0; i <16;++i) result += get_bit(ins,i);
+    return result;
+}
+
+/*FONCTION POUR LES INSTRUCTION D'ARM*/
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
