@@ -635,8 +635,8 @@ int arm_load_store_LDR(arm_core p,uint32_t ins){
         return DATA_ABORT;
     }
 
-    uint32_t *value = NULL;
-    int data =ror(arm_read_word(p,address,value),8*get_bits(address,1,0));
+    uint32_t value;
+    int data =ror(arm_read_word(p,address,&value),8*get_bits(address,1,0));
 
     if (get_bits(ins,15,12) == 15){
         arm_write_register(p,15,data & 0xFFFFFFFE);
@@ -657,10 +657,10 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
         return DATA_ABORT;
     }
 
-    uint8_t *value = NULL;
+    uint8_t value;
 
-    arm_read_byte(p,address,value);
-    arm_write_register(p,get_bits(ins,15,12),*value);
+    arm_read_byte(p,address,&value);
+    arm_write_register(p,get_bits(ins,15,12),value);
     return 0;
 }
 
@@ -687,20 +687,21 @@ int arm_load_store_LDM(arm_core p,uint32_t ins){
 
     address = start_address;
     int i;
-    uint32_t *value = NULL;
+    uint32_t value;
     
     for (i = 0; i< 15; ++i){
         if (get_bit(ins,i)){
-            arm_read_word(p,address,value);
-            arm_write_register(p,i,*value);
+            arm_read_word(p,address,&value);
+            arm_write_register(p,i,value);
             address +=4;
         }
     }
 
     if (get_bit(ins,15)){
-        *value = arm_read_word(p,address,value);
-        arm_write_register(p,15,*value & 0xFFFFFFFE);
-        arm_write_cpsr(p,set_bits(arm_read_cpsr(p),5,5,get_bit(*value,0)));
+        i = arm_read_word(p,address,&value);
+        if (i == -1) return -1;
+        arm_write_register(p,15, value & 0xFFFFFFFE);
+        arm_write_cpsr(p,set_bits(arm_read_cpsr(p),5,5,get_bit(value,0)));
 
         address +=4;
     }
