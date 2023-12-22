@@ -94,34 +94,35 @@ int main() {
     arm_write_register(p, 0, 0xF0000000);
     arm_write_register(p, 1, 0xF000000F);
     ///////////////////////I////SRn  Rd  Shifter_oper
-    execute_sub(p, 0b00000000000100010010000000000000);
+    execute_SUB(p, 0b00000000000100010010000000000000);
     printf("SUB returns accurate value 1 :        %d\n", arm_read_register(p, 2) == 0x0000000F);
     printf("SUB changes CPSR according to doc 1 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b000);
     arm_write_register(p, 0, 0x00000000);
     arm_write_register(p, 1, 0x0000000F);
     ///////////////////////I////SRn  Rd  Shifter_oper
-    execute_sub(p, 0b00000000000100000010000000000001);
+    execute_SUB(p, 0b00000000000100000010000000000001);
     printf("SUB returns accurate value 2 :        %d\n", arm_read_register(p, 2) == -15);
     printf("SUB changes CPSR according to doc 2 : %d\n", get_bits(arm_read_cpsr(p), 31, 28) == 0b1011);
 
     // TESTS RSB
     printf("\nTesting RSB...\n");
     ///////////////////////I////SRn  Rd  Shifter_oper
-    execute_rsb(p, 0b00000000000100000010000000000001);
+    execute_RSB(p, 0b00000000000100000010000000000001);
     printf("RSB returns accurate value 1 :        %d\n", arm_read_register(p, 2) == 0x0000000F);
     printf("RSB changes CPSR according to doc 1 : %d\n", get_bits(arm_read_cpsr(p), 31, 29) == 0b000);
     ///////////////////////I////SRn  Rd  Shifter_oper
-    execute_rsb(p, 0b00000000000100010010000000000000);
+    execute_RSB(p, 0b00000000000100010010000000000000);
     printf("RSB returns accurate value 2 :        %d\n", arm_read_register(p, 2) == -15);
     printf("RSB changes CPSR according to doc 2 : %d\n", get_bits(arm_read_cpsr(p), 31, 28) == 0b1011);
 
     // TESTS MOV
     printf("\nTesting MOV...\n");
     ///////////////////////I////SRn  Rd  Shifter_oper
-    execute_mov(p, 0b00000000000100000010000000000001);
+    execute_MOV(p, 0b00000000000100000010000000000001);
     printf("MOV actually moves. wow... :          %d\n", arm_read_register(p, 2) == arm_read_register(p, 1));
 
-    // TESTS
+
+
     
     registers_destroy(r);
     memory_destroy(m);
