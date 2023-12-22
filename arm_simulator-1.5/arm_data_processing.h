@@ -41,14 +41,14 @@ int execute_BIC(arm_core p, uint32_t instruction);
 SECTION OPERATIONS ARITHMETIQUES
 ********************************/
 int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op);
-int execute_sub(arm_core p, uint32_t ins);
-int execute_rsb(arm_core p, uint32_t ins);
-int execute_sbc(arm_core p, uint32_t ins);
-int execute_rsc(arm_core p, uint32_t ins);
-int execute_add(arm_core p, uint32_t ins);
-int execute_adc(arm_core p, uint32_t ins);
-int execute_mov(arm_core p, uint32_t ins);
-int execute_mvn(arm_core p, uint32_t ins);
+int execute_SUB(arm_core p, uint32_t ins);
+int execute_RSB(arm_core p, uint32_t ins);
+int execute_SBC(arm_core p, uint32_t ins);
+int execute_RSC(arm_core p, uint32_t ins);
+int execute_ADD(arm_core p, uint32_t ins);
+int execute_ADC(arm_core p, uint32_t ins);
+int execute_MOV(arm_core p, uint32_t ins);
+int execute_MVN(arm_core p, uint32_t ins);
 int execute_moving(arm_core p, uint32_t ins, uint64_t res, uint8_t rd);
 
 int arm_data_processing_shift(arm_core p, uint32_t ins);

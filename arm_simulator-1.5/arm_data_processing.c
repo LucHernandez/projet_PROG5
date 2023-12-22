@@ -207,7 +207,7 @@ int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_
 	return 0;
 }
 
-int execute_sub(arm_core p, uint32_t ins){
+int execute_SUB(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -216,7 +216,7 @@ int execute_sub(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_rsb(arm_core p, uint32_t ins){
+int execute_RSB(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -225,7 +225,7 @@ int execute_rsb(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_sbc(arm_core p, uint32_t ins){
+int execute_SBC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -234,7 +234,7 @@ int execute_sbc(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_rsc(arm_core p, uint32_t ins){
+int execute_RSC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -243,7 +243,7 @@ int execute_rsc(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_add(arm_core p, uint32_t ins){
+int execute_ADD(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -252,7 +252,7 @@ int execute_add(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_adc(arm_core p, uint32_t ins){
+int execute_ADC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
@@ -261,14 +261,14 @@ int execute_adc(arm_core p, uint32_t ins){
 	return execute_operation(p, ins, res, rd, rn, shifter_op);
 }
 
-int execute_mov(arm_core p, uint32_t ins){
+int execute_MOV(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint32_t res = get_shifter_operand(p, ins, NULL);
 
 	return execute_moving(p, ins, res, rd);
 }
 
-int execute_mvn(arm_core p, uint32_t ins){
+int execute_MVN(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint32_t res = ~(get_shifter_operand(p, ins, NULL));
 
