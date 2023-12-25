@@ -310,88 +310,87 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *en
 
 /**/
 
-uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
+
+int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
+
+    int bit_i=get_bit(ins,25);
+    int flag_index = 0;
+
+    if(bit_i == 0){
+        int offset = get_bits(ins,11,0);
+        if(calcul_adresse(p,ins,flag_index,addr,offset)==-1){
+            return DATA_ABORT;
+        }
+        else{
+            return 0;
+        }
+    }
+    else{
+        uint8_t RmNum = get_bits(ins,3,0);
+        uint32_t RmVal = arm_read_register(p,RmNum);
+        if(get_bits(ins,11,4)!=0){
+            flag_index = 1;
+            if(calcul_adresse(p,ins,flag_index,addr,RmVal)==-1){
+                return DATA_ABORT;
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            if(calcul_adresse(p,ins,flag_index,addr,RmVal)==-1){
+                return DATA_ABORT;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
+
+}
+
+uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,uint32_t* addr,uint32_t value){
     uint8_t bits_wpu = get_bits(ins,25,23);
     uint8_t RnNum = get_bits(ins,19,16);
     int32_t RnVal = arm_read_register(p,RnNum);
-    uint8_t RmNum;
-    uint32_t RmVal;
-    uint32_t index = 0;
+    uint32_t index = value;
     uint32_t result = 0;
 
-    if(If_Kevin(p,ins,&RmVal,&RmNum,&index)==-1){
-        return DATA_ABORT;
+    if(flag_index == 1){
+        index = Shift_case(p,ins,value);
     }
 
     switch(bits_wpu){
         case 0b101: //Offset +
-            if(index != 0){
-                result = RnVal + index;
-                *addr = result;
-                return 0;
-            }
-
-            result = RnVal + RmVal;
+            result = RnVal + index;
             *addr = result;
             return 0;
 
         case 0b100: //Offset -
-            if(index != 0){
-                result = RnVal - index;
-                *addr = result;
-                return 0;
-            }
-
-            result = RnVal - RmVal;
+            result = RnVal - index;
             *addr = result;
             return 0;
 
         case 0b111: //Pre-index +
-            if(index != 0){
-                result = RnVal + index;
-                arm_write_register(p,RnNum,result);
-                *addr = result;
-                return 0;
-            }
-
-            result = RnVal + RmVal;
+            result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b110: //Pre-index -
-            if(index != 0){
-                result = RnVal - index;
-                arm_write_register(p,RnNum,result);
-                *addr = result;
-                return 0;
-            }
-
-            result = RnVal - RmVal;
+            result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b001: //Post-index +
-            if(index != 0){
-                result = RnVal + index;
-                arm_write_register(p,RnNum,result);
-                *addr = RnVal;
-                return 0;
-            }
-            result = RnVal + RmVal;
+            result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
             return 0;
 
         case 0b000: //Post-index -
-            if(index != 0){
-                result = RnVal - index;
-                arm_write_register(p,RnNum,result);
-                *addr = RnVal;
-                return 0;
-            }
-            result = RnVal - RmVal;
+            result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
             return 0;
@@ -402,35 +401,12 @@ uint8_t Bits_WPU(arm_core p,uint32_t ins,uint32_t* addr){
 
 }
 
-int If_Kevin(arm_core p,uint32_t ins,uint32_t* RmVal,uint8_t* RmNum,uint32_t* index){
-    uint8_t i = get_bit(ins,25);
 
-    if(i==0){
-        *RmVal = get_bits(ins,11,0);
-        return 0;
-    }
-    if(get_bits(ins,11,4) == 0){
-        *RmNum = get_bits(ins,3,0);
-        *RmVal = arm_read_register(p,*RmNum);
-        return 0;
-    }
-    if(get_bits(ins,11,4) != 0){
-        *RmNum = get_bits(ins,3,0);
-        *RmVal = arm_read_register(p,*RmNum);
-        int Shift_imm = get_bits(ins,11,7);
-        int Shift = get_bits(ins,6,5);
-        *index = Shift_case(p,Shift,*RmVal,Shift_imm);
 
-        return 0;
-    }
-    else{
-        return -1;
-    }
-
-}
-
-int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm){
-    int index = 0;
+uint32_t Shift_case(arm_core p,uint32_t ins,uint32_t RmVal){
+    uint Shift = get_bits(ins,6,5);
+    uint Shift_imm = get_bits(ins,11,7);
+    uint32_t index = 0;
     switch(Shift){
         case 0b00:
             index = RmVal << Shift_imm;
@@ -483,10 +459,11 @@ int Number_Of_Set_Bits_In(uint32_t ins){
 }
 
 /*FONCTION POUR LES INSTRUCTION D'ARM*/
+
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Bits_WPU(p,ins,&addr)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&addr)){
         return DATA_ABORT;
     }
     arm_write_word(p,addr,value);
@@ -496,7 +473,7 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Bits_WPU(p,ins,&addr)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&addr)){
         return DATA_ABORT;
     }    
     arm_write_byte(p,addr,value);
@@ -544,7 +521,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 int arm_load_store_LDR(arm_core p,uint32_t ins){
     uint32_t address;
 
-    if(Bits_WPU(p,ins,&address)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&address)){
         return DATA_ABORT;
     }
 
@@ -566,7 +543,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
     // Rd = Memory[address,1]
     uint32_t address = 0;
 
-    if(Bits_WPU(p,ins,&address)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&address)){
         return DATA_ABORT;
     }
 
