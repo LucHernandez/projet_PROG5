@@ -308,8 +308,7 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *en
     return 0;
 }
 
-/**/
-
+/*Fonction qui permet de recuperer l'adresse memoire calculer pour le LDR/STR et le LDRB/STRB */
 
 int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
 
@@ -355,6 +354,10 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
     }
 
 }
+
+
+/*Fonction qui calcul les modification de l'adresse selon si c'est du post/pre-indexation ou un offset selon si c'est positif ou negatif */
+
 
 uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalent,uint32_t* addr,uint32_t value){
     uint8_t bits_wpu = get_bits(ins,25,23);
