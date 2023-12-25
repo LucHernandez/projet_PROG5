@@ -30,7 +30,7 @@ int arm_load_store_multiple(arm_core p, uint32_t ins);
 int arm_coprocessor_load_store(arm_core p, uint32_t ins);
 
 uint32_t Shift_case(arm_core p,uint32_t ins,uint32_t RmVal);
-uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,uint32_t* addr,uint32_t value);
+uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalent,uint32_t* addr,uint32_t value);
 int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr);
 uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr);
 uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address);

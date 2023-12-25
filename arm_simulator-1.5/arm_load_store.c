@@ -315,10 +315,11 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
 
     int bit_i=get_bit(ins,25);
     int flag_index = 0;
-
+    int flag_Equivalent = 0;
+    
     if(bit_i == 0){
         int offset = get_bits(ins,11,0);
-        if(calcul_adresse(p,ins,flag_index,addr,offset)==-1){
+        if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,offset)==-1){
             return DATA_ABORT;
         }
         else{
@@ -328,9 +329,15 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
     else{
         uint8_t RmNum = get_bits(ins,3,0);
         uint32_t RmVal = arm_read_register(p,RmNum);
+        if (RmNum == 15){
+            return DATA_ABORT;
+        }
+        if(get_bits(ins,19,16) == RmNum){
+            flag_Equivalent = 1;
+        }
         if(get_bits(ins,11,4)!=0){
             flag_index = 1;
-            if(calcul_adresse(p,ins,flag_index,addr,RmVal)==-1){
+            if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,RmVal)==-1){
                 return DATA_ABORT;
             }
             else{
@@ -338,7 +345,7 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
             }
         }
         else{
-            if(calcul_adresse(p,ins,flag_index,addr,RmVal)==-1){
+            if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,RmVal)==-1){
                 return DATA_ABORT;
             }
             else{
@@ -349,13 +356,15 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
 
 }
 
-uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,uint32_t* addr,uint32_t value){
+uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalent,uint32_t* addr,uint32_t value){
     uint8_t bits_wpu = get_bits(ins,25,23);
     uint8_t RnNum = get_bits(ins,19,16);
     int32_t RnVal = arm_read_register(p,RnNum);
     uint32_t index = value;
     uint32_t result = 0;
-
+    if(RnNum == 15){
+        RnVal += 15;
+    }
     if(flag_index == 1){
         index = Shift_case(p,ins,value);
     }
@@ -372,24 +381,40 @@ uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,uint32_t* addr,uin
             return 0;
 
         case 0b111: //Pre-index +
+            if (RnNum == 15){
+                return DATA_ABORT;
+            }
+            if(flag_Equivalent == 1 ) return DATA_ABORT;
             result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b110: //Pre-index -
+            if (RnNum == 15){
+                return DATA_ABORT;
+            }
+            if(flag_Equivalent == 1 ) return DATA_ABORT;
             result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b001: //Post-index +
+            if (RnNum == 15){
+                return DATA_ABORT;
+            }
+            if(flag_Equivalent == 1 ) return DATA_ABORT;
             result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
             return 0;
 
         case 0b000: //Post-index -
+            if (RnNum == 15){
+                return DATA_ABORT;
+            }
+            if(flag_Equivalent == 1 ) return DATA_ABORT;
             result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
@@ -400,7 +425,6 @@ uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,uint32_t* addr,uin
     }
 
 }
-
 
 
 uint32_t Shift_case(arm_core p,uint32_t ins,uint32_t RmVal){
