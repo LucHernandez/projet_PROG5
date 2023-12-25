@@ -22,7 +22,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     if (get_bit(ins,25) == 0){
         printf("addressing_mode : Immediate\n");
 
-        retour = Bits_WPU(p,ins,&address);
+        retour = Recup_addresse_WORD_BYTE(p,ins,&address);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
         }
@@ -34,7 +34,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     else if (get_bit(ins,25) && get_bits(ins,11,4) != 0){
         printf("addressing_mode : Scaled\n");
         
-        retour = Bits_WPU(p,ins,&address);
+        retour = Recup_addresse_WORD_BYTE(p,ins,&address);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
         }
@@ -46,7 +46,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     else if (get_bit(ins,25) && get_bits(ins,11,4) == 0) {
         printf("addressing_mode : Register\n");
 
-        retour = Bits_WPU(p,ins,&address);
+        retour = Recup_addresse_WORD_BYTE(p,ins,&address);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
         }
