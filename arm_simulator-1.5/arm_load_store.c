@@ -313,9 +313,11 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *en
 int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
 
     int bit_i=get_bit(ins,25);
-    int flag_index = 0;
+    int flag_index = 0; //Flag utiliser pour savoir si on va avoir affaire a du shifting telle que LSL,LSR,ASR etc
     int flag_Equivalent = 0;
     
+    //On verifie si c'est un immediate ou non
+
     if(bit_i == 0){
         int offset = get_bits(ins,11,0);
         if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,offset)==-1){
@@ -328,13 +330,13 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
     else{
         uint8_t RmNum = get_bits(ins,3,0);
         uint32_t RmVal = arm_read_register(p,RmNum);
-        if (RmNum == 15){
+        if (RmNum == 15){ //si ce n'est pas un immediate et que l'on a R15 pour Rm on est assurer d'avoir un resultat incertain 
             return DATA_ABORT;
         }
-        if(get_bits(ins,19,16) == RmNum){
+        if(get_bits(ins,19,16) == RmNum){ //On regarde si les 2 registre sont equivalent on change juste le flag on est pas sur d'avoir un resultat incertain ce coup si car pour le cas d'un offset sur un register ou scaled register equivalent le resultat fonctionne pour un pre ou post la le resultat est incertain
             flag_Equivalent = 1;
         }
-        if(get_bits(ins,11,4)!=0){
+        if(get_bits(ins,11,4)!=0){ // On verifie si on a un register ou un scaled register voir la P.461 et 462 du pdf pour comprendre la difference
             flag_index = 1;
             if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,RmVal)==-1){
                 return DATA_ABORT;
@@ -384,40 +386,40 @@ uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalen
             return 0;
 
         case 0b111: //Pre-index +
-            if (RnNum == 15){
-                return DATA_ABORT;
+            if (RnNum == 15){ // resultat incertain
+                return DATA_ABORT; 
             }
-            if(flag_Equivalent == 1 ) return DATA_ABORT;
+            if(flag_Equivalent == 1 ) return DATA_ABORT; // resultat incertain car on verifie que les 2 registre sont pas equivalent si ils le sont le resultat est incertain
             result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b110: //Pre-index -
-            if (RnNum == 15){
-                return DATA_ABORT;
+            if (RnNum == 15){ // resultat incertain
+                return DATA_ABORT; 
             }
-            if(flag_Equivalent == 1 ) return DATA_ABORT;
+            if(flag_Equivalent == 1 ) return DATA_ABORT; // resultat incertain car on verifie que les 2 registre sont pas equivalent si ils le sont le resultat est incertain
             result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = result;
             return 0;
 
         case 0b001: //Post-index +
-            if (RnNum == 15){
+            if (RnNum == 15){ // resultat incertain 
                 return DATA_ABORT;
             }
-            if(flag_Equivalent == 1 ) return DATA_ABORT;
+            if(flag_Equivalent == 1 ) return DATA_ABORT; // resultat incertain car on verifie que les 2 registre sont pas equivalent si ils le sont le resultat est incertain
             result = RnVal + index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
             return 0;
 
         case 0b000: //Post-index -
-            if (RnNum == 15){
-                return DATA_ABORT;
+            if (RnNum == 15){ // resultat incertain
+                return DATA_ABORT; 
             }
-            if(flag_Equivalent == 1 ) return DATA_ABORT;
+            if(flag_Equivalent == 1 ) return DATA_ABORT; // resultat incertain car on verifie que les 2 registre sont pas equivalent si ils le sont le resultat est incertain
             result = RnVal - index;
             arm_write_register(p,RnNum,result);
             *addr = RnVal;
