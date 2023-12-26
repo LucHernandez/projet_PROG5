@@ -119,6 +119,7 @@ int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
 
 /*FONCTION POUR LES ADDR_MODE*/
 
+/*
 uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     uint8_t i,pb,w,u;
     i = get_bit(ins,22);
@@ -131,7 +132,7 @@ uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     if(i==1){
         uint8_t immedH = get_bits(ins,11,8);
         uint8_t ImmedL = get_bits(ins,3,0);
-        uint8_t offset = (immedH << 4)|ImmedL;;
+        uint8_t offset = (immedH << 4)|ImmedL;
         if(pb==0){ 
             if(w==0){ // Immediate Post-Indexed p479
                 if(RnNum == 15){
@@ -264,6 +265,8 @@ uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
     }   
 }
 
+*/
+
 uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address){
     if (get_bit(ins,22) && !arm_current_mode_has_spsr(p)){
         return DATA_ABORT;
@@ -310,17 +313,23 @@ uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *en
 
 /*Fonction qui permet de recuperer l'adresse memoire calculer pour le LDR/STR et le LDRB/STRB */
 
-int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
+int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr,int flag_Half){
 
     int bit_i=get_bit(ins,25);
-    int flag_index = 0; //Flag utiliser pour savoir si on va avoir affaire a du shifting telle que LSL,LSR,ASR etc
+    if(flag_Half == 1)bit_i = get_bit(ins,22);
+    int flag_Index = 0; //Flag utiliser pour savoir si on va avoir affaire a du shifting telle que LSL,LSR,ASR etc
     int flag_Equivalent = 0;
     
     //On verifie si c'est un immediate ou non
 
     if(bit_i == 0){
-        int offset = get_bits(ins,11,0);
-        if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,offset)==-1){
+        uint32_t offset = get_bits(ins,11,0);
+        if(flag_Half == 1){
+            uint32_t immedH = get_bits(ins,11,8);
+            uint32_t ImmedL = get_bits(ins,3,0);
+            offset = (immedH << 4)|ImmedL;
+        }
+        if(calcul_adresse(p,ins,flag_Index,flag_Equivalent,addr,offset)==-1){
             return DATA_ABORT;
         }
         else{
@@ -336,9 +345,9 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
         if(get_bits(ins,19,16) == RmNum){ //On regarde si les 2 registre sont equivalent on change juste le flag on est pas sur d'avoir un resultat incertain ce coup si car pour le cas d'un offset sur un register ou scaled register equivalent le resultat fonctionne pour un pre ou post la le resultat est incertain
             flag_Equivalent = 1;
         }
-        if(get_bits(ins,11,4)!=0){ // On verifie si on a un register ou un scaled register voir la P.461 et 462 du pdf pour comprendre la difference
-            flag_index = 1;
-            if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,RmVal)==-1){
+        if(get_bits(ins,11,4) != 0 && flag_Half == 0){ // On verifie si on a un register ou un scaled register voir la P.461 et 462 du pdf pour comprendre la difference
+            flag_Index = 1;
+            if(calcul_adresse(p,ins,flag_Index,flag_Equivalent,addr,RmVal)==-1){
                 return DATA_ABORT;
             }
             else{
@@ -346,7 +355,7 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
             }
         }
         else{
-            if(calcul_adresse(p,ins,flag_index,flag_Equivalent,addr,RmVal)==-1){
+            if(calcul_adresse(p,ins,flag_Index,flag_Equivalent,addr,RmVal)==-1){
                 return DATA_ABORT;
             }
             else{
@@ -362,7 +371,9 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr){
 
 
 uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalent,uint32_t* addr,uint32_t value){
-    uint8_t bits_wpu = get_bits(ins,25,23);
+    uint8_t bits_pu = get_bits(ins,24,23);
+    int bit_w = get_bit(ins,21);
+    uint8_t bits_wpu = ((bit_w << 2) | bits_pu);
     uint8_t RnNum = get_bits(ins,19,16);
     int32_t RnVal = arm_read_register(p,RnNum);
     uint32_t index = value;
@@ -492,7 +503,7 @@ int Number_Of_Set_Bits_In(uint32_t ins){
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE(p,ins,&addr)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&addr,0)){
         return DATA_ABORT;
     }
     arm_write_word(p,addr,value);
@@ -502,7 +513,7 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE(p,ins,&addr)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&addr,0)){
         return DATA_ABORT;
     }    
     arm_write_byte(p,addr,value);
@@ -512,7 +523,7 @@ int arm_load_store_STRB(arm_core p,uint32_t ins){
 int arm_load_store_STRH(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint16_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(addr_mode_H(p,ins,&addr)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&addr,1)){
         return DATA_ABORT;
     }
     if(get_bit(addr,0)==0){
@@ -550,7 +561,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 int arm_load_store_LDR(arm_core p,uint32_t ins){
     uint32_t address;
 
-    if(Recup_addresse_WORD_BYTE(p,ins,&address)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&address,0)){
         return DATA_ABORT;
     }
 
@@ -572,7 +583,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
     // Rd = Memory[address,1]
     uint32_t address = 0;
 
-    if(Recup_addresse_WORD_BYTE(p,ins,&address)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&address,0)){
         return DATA_ABORT;
     }
 
@@ -585,7 +596,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
 
 int arm_load_store_LDRH(arm_core p,uint32_t ins){
     uint32_t address;
-    if(addr_mode_H(p,ins,&address)){
+    if(Recup_addresse_WORD_BYTE(p,ins,&address,1)){
         return DATA_ABORT;
     }
     uint16_t data = 0;
