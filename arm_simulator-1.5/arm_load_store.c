@@ -318,6 +318,7 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr,int flag_Hal
     int bit_i=get_bit(ins,25);
     if(flag_Half == 1)bit_i = get_bit(ins,22);
     int flag_Index = 0; //Flag utiliser pour savoir si on va avoir affaire a du shifting telle que LSL,LSR,ASR etc
+    
     int flag_Equivalent = 0;
     
     //On verifie si c'est un immediate ou non
@@ -342,7 +343,7 @@ int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr,int flag_Hal
         if (RmNum == 15){ //si ce n'est pas un immediate et que l'on a R15 pour Rm on est assurer d'avoir un resultat incertain 
             return DATA_ABORT;
         }
-        if(get_bits(ins,19,16) == RmNum){ //On regarde si les 2 registre sont equivalent on change juste le flag on est pas sur d'avoir un resultat incertain ce coup si car pour le cas d'un offset sur un register ou scaled register equivalent le resultat fonctionne pour un pre ou post la le resultat est incertain
+        if(get_bits(ins,19,16) == RmNum){ //On regarde si les 2 registres sont equivalent on change juste le flag on est pas sur d'avoir un resultat incertain ce coup si car pour le cas d'un offset sur un register ou scaled register equivalent le resultat fonctionne pour un pre ou post la le resultat est incertain
             flag_Equivalent = 1;
         }
         if(get_bits(ins,11,4) != 0 && flag_Half == 0){ // On verifie si on a un register ou un scaled register voir la P.461 et 462 du pdf pour comprendre la difference
@@ -385,13 +386,13 @@ uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalen
         index = Shift_case(p,ins,value);
     }
 
-    switch(bits_wpu){
-        case 0b101: //Offset +
+    switch(bits_wpu){ 
+        case 0b011: //Offset +
             result = RnVal + index;
             *addr = result;
             return 0;
 
-        case 0b100: //Offset -
+        case 0b010: //Offset -
             result = RnVal - index;
             *addr = result;
             return 0;
