@@ -114,29 +114,33 @@ int arm_data_processing_instructions(arm_core p, uint32_t ins) {
 }
 
 // Fonction de calcul des flags des operations arithmetiques et logiques et execution de celles-ci
-int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op, uint8_t carry_out, int cas){
+int execute_operation(arm_core p, uint32_t ins, int res, uint8_t rd, uint8_t rn, uint32_t shifter_op, uint8_t carry_out, int cas){
 	
 	// equivalent au resultat 64 bits mais sur 32 pour pouvoir faire les comparaisons lors des calculs des flags
 	uint32_t alu_out = (uint32_t)res;
 	uint32_t n = get_bit(res, N) << N;
 	uint32_t z = (alu_out == 0 ? 1 : 0) << Z;
-	uint32_t c = ((uint64_t)alu_out == res ? 0 : 1) << C;
+	uint32_t c = ((int)alu_out == res ? 0 : 1) << C;
+	printf("alu_out = %d\nres = %d\n", (int)alu_out, res);
 	uint32_t v;
 
 	switch (cas){
 		// cas de l'addition
 		case 1:
-			v = ((get_bit(shifter_op, V) == get_bit(arm_read_register(p, rn), V) && get_bit(shifter_op, V) != get_bit(res, V)) ? 1 : 0) << V;
+			v = ((get_bit(shifter_op, 31) == get_bit(arm_read_register(p, rn), 31) && get_bit(shifter_op, 31) != get_bit(res, 31)) ? 1 : 0) << V;
+			break;
 		// cas de la soustraction
 		case 2:
-			v = ((get_bit(shifter_op, V) != get_bit(arm_read_register(p, rn), V) && get_bit(shifter_op, V) == get_bit(res, V)) ? 1 : 0) << V;
+			v = ((get_bit(shifter_op, 31) != get_bit(arm_read_register(p, rn), 31) && get_bit(shifter_op, 31) == get_bit(res, 31)) ? 1 : 0) << V;
+			break;
 		// cas d'operations logiques
 		case 3:
 			c = carry_out << C;
-			v = get_bit(arm_read_cpsr(p), V) << V;
+			v = get_bit(arm_read_cpsr(p), 31) << V;
+			break;
 	}
 	
-	uint32_t cpsr = arm_read_cpsr(p) & ~(((uint32_t) 0b1111) << 28);
+	uint32_t cpsr = get_bits(arm_read_cpsr(p), 27, 0);
 	
 	// Pour les cas des opérations de comparaison qui ne necessitent pas d'ecrire dans un registre
 	if (rd == 255){				
@@ -157,7 +161,13 @@ int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_
 			}
 		}
 		else if (get_bit(ins, 20) == 1){
-			arm_write_cpsr(p, cpsr | n | z | c | v);
+			printf("n= %d\n",n);
+			printf("z= %d\n",z);
+			printf("c= %d\n", get_bits(c, 31, 28));
+			printf("v= %d\n", get_bits(v, 31, 28));
+			printf("cpsr nzcv= %d \n", get_bits(cpsr, 31, 28));
+			printf("nzcv= %d \n", get_bits((cpsr | n | z | c | v), 31, 28));
+			arm_write_cpsr(p, (cpsr | n | z | c | v));
 		}
 	}
 	return 0;
@@ -173,7 +183,7 @@ int execute_SUB(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
 
-	uint64_t res = (uint64_t)arm_read_register(p, rn) - (uint64_t)shifter_op;
+	int res = (int)arm_read_register(p, rn) - (int)shifter_op;
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 2);
 }
@@ -182,7 +192,7 @@ int execute_RSB(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)shifter_op - (uint64_t)arm_read_register(p, rn);
+	int res = (int)shifter_op - (int)arm_read_register(p, rn);
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 2);
 }
@@ -191,7 +201,7 @@ int execute_SBC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)arm_read_register(p, rn) - (uint64_t)shifter_op - (uint64_t)(~get_bit(arm_read_cpsr(p), C));
+	int res = (int)arm_read_register(p, rn) - (int)shifter_op - (int)(~get_bit(arm_read_cpsr(p), C));
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 2);
 }
@@ -200,7 +210,7 @@ int execute_RSC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)shifter_op - (uint64_t)arm_read_register(p, rn) - (uint64_t)(~get_bit(arm_read_cpsr(p), C));
+	int res = (int)shifter_op - (int)arm_read_register(p, rn) - (int)(~get_bit(arm_read_cpsr(p), C));
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 2);
 }
@@ -208,7 +218,7 @@ int execute_RSC(arm_core p, uint32_t ins){
 int execute_CMP(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)arm_read_register(p, rn) - (uint64_t)shifter_op;
+	int res = (int)arm_read_register(p, rn) - (int)shifter_op;
 
 	return execute_operation(p, ins, res, (uint8_t)255, rn, shifter_op, (uint8_t)255, 2);
 }
@@ -221,7 +231,7 @@ int execute_ADD(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)arm_read_register(p, rn) + (uint64_t)shifter_op;
+	int res = (int)arm_read_register(p, rn) + (int)shifter_op;
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 1);
 }
@@ -230,7 +240,7 @@ int execute_ADC(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)arm_read_register(p, rn) + (uint64_t)shifter_op + (uint64_t)get_bit(arm_read_cpsr(p), C);
+	int res = (int)arm_read_register(p, rn) + (int)shifter_op + (int)get_bit(arm_read_cpsr(p), C);
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, (uint8_t)255, 1);
 }
@@ -238,7 +248,7 @@ int execute_ADC(arm_core p, uint32_t ins){
 int execute_CMN(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint32_t shifter_op = get_shifter_operand(p, ins, NULL);
-	uint64_t res = (uint64_t)arm_read_register(p, rn) + (uint64_t)shifter_op;
+	int res = (int)arm_read_register(p, rn) + (int)shifter_op;
 
 	return execute_operation(p, ins, res, (uint8_t)255, rn, shifter_op, (uint8_t)255, 1);
 }
@@ -252,7 +262,7 @@ int execute_AND(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) & shifter_op;
+	int res = arm_read_register(p, rn) & shifter_op;
 
 	return execute_operation(p, ins, res, rd, rn, shifter_op, carry_out, 3);
 }
@@ -262,7 +272,7 @@ int execute_EOR(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) ^ shifter_op;
+	int res = arm_read_register(p, rn) ^ shifter_op;
 	
 	return execute_operation(p, ins, res, rd, rn, shifter_op, carry_out, 3);
 }
@@ -271,7 +281,7 @@ int execute_TST(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) & shifter_op;
+	int res = arm_read_register(p, rn) & shifter_op;
 	
 	return execute_operation(p, ins, res, (uint8_t)255, rn, shifter_op, carry_out, 3);
 }
@@ -280,7 +290,7 @@ int execute_TEQ(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) ^ shifter_op;
+	int res = arm_read_register(p, rn) ^ shifter_op;
 	
 	return execute_operation(p, ins, res, (uint8_t)255, rn, shifter_op, carry_out, 3);
 }
@@ -290,7 +300,7 @@ int execute_ORR(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) | shifter_op;
+	int res = arm_read_register(p, rn) | shifter_op;
 	
 	return execute_operation(p, ins, res, rd, rn, shifter_op, carry_out, 3);
 }
@@ -300,7 +310,7 @@ int execute_BIC(arm_core p, uint32_t ins){
 	uint8_t rn = get_bits(ins, 19, 16);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = arm_read_register(p, rn) & ~shifter_op;
+	int res = arm_read_register(p, rn) & ~shifter_op;
 	
 	return execute_operation(p, ins, res, rd, rn, shifter_op, carry_out, 3);
 }
@@ -310,14 +320,14 @@ int execute_MOV(arm_core p, uint32_t ins){
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
 
-	return execute_operation(p, ins, (uint64_t)shifter_op, rd, (uint8_t)255, shifter_op, carry_out, 3);
+	return execute_operation(p, ins, (int)shifter_op, rd, (uint8_t)255, shifter_op, carry_out, 3);
 }
 
 int execute_MVN(arm_core p, uint32_t ins){
 	uint8_t rd = get_bits(ins, 15, 12);
 	uint8_t carry_out = 0;
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
-	uint64_t res = (uint64_t)(~shifter_op);
+	int res = (int)(~shifter_op);
 
 	return execute_operation(p, ins, res, rd, (uint8_t)255, shifter_op, carry_out, 3);
 }
