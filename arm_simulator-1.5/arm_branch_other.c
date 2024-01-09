@@ -26,12 +26,6 @@ Contact: Guillaume.Huard@imag.fr
 #include <debug.h>
 #include <stdlib.h>
 
-int B(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
-int MRS(arm_core p, uint32_t ins){
-    return UNDEFINED_INSTRUCTION;
-}
 
 int arm_branch(arm_core p, uint32_t ins) {
     int bits_25_27 = get_bits(ins, 27, 25);
@@ -39,14 +33,14 @@ int arm_branch(arm_core p, uint32_t ins) {
     int res_instru;
     switch(bits_25_27){
         case 0b101:
-            res_instru = B(p, ins);
+            res_instru = arm_branch_other_b_bl(p, ins);
             return res_instru;
         default:
             return UNDEFINED_INSTRUCTION;
         }
 }
 
-int arm_coprocessor_others_swi(arm_core p, uint32_t ins) {
+int arm_coprocessor_others_swi(arm_core p, uint32_t ins){
     if (get_bit(ins, 24)) {
         return SOFTWARE_INTERRUPT;
     }
@@ -62,7 +56,7 @@ int arm_miscellaneous(arm_core p, uint32_t ins) {
     {
     case 0b000:
         if(bits_20_21 == 0b00){
-            res_instru = MRS(p, ins);
+            res_instru = arm_branch_other_mrs(p, ins);
             return res_instru;
         }
         return UNDEFINED_INSTRUCTION;
@@ -70,3 +64,63 @@ int arm_miscellaneous(arm_core p, uint32_t ins) {
         return UNDEFINED_INSTRUCTION;
     }
 }
+
+uint32_t decod_adr (uint32_t adr){
+    //ont etant le 23 eme bit 
+    //si le bit est 1 alors ont set tout les bits jusqua 30 a 1
+    //si non rien besoin de faire car ils sont deja egal a 0
+    if(get_bit(adr,23)==1){
+        adr = set_bits(adr, 29, 24, 0b111111);
+    }
+
+    //ont shifte de 2 bit pour obtenire une adresse en 32 bits
+    adr=adr<<2;
+
+    //renvois de l'adresse decoder
+    return adr;
+}
+
+
+int arm_branch_other_b_bl(arm_core p, uint32_t ins){
+
+    //test si le bit L (bit 24) est a un 
+    if (get_bit(ins,24)==1){
+        //stock l'adresse de PC dans le registre 14 aussi nomee LR
+        arm_write_register(p,14,arm_read_register(p,15));
+    }
+
+    //decode le saut pour la suite des instruction a executer
+    uint32_t adr=decod_adr(get_bits(ins,23,0));
+
+    arm_write_register(p,15,arm_read_register(p,15)+adr);
+
+    return 0;
+}
+
+int arm_branch_other_mrs (arm_core p, uint32_t ins){
+    //ont recupere le numero du registre destination
+    uint32_t numero_reg=get_bits(ins,15,12);
+
+    //ont verifie que le registre destination n'est pas R15 car il est UNPREDICTABLE
+    if(numero_reg==15){
+        exit(1);
+    }
+
+    //si non ont continue le deroulement normal
+    //ont regarde le bit 22 qui nous dit si ont veut copier CPSR ou SPSR
+    if(get_bit(ins,22)==1){
+        //test si le mode actuel a bien un registre spcr
+        if(arm_current_mode_has_spsr(p)){
+            arm_write_register(p,numero_reg,arm_read_spsr(p));
+        }
+        else{
+            exit(2);
+        }
+    }
+    else{
+        arm_write_register(p,numero_reg,arm_read_cpsr(p));
+    }
+    return 0;
+}
+
+

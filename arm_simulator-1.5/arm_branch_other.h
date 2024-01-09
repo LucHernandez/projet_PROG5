@@ -25,11 +25,12 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdint.h>
 #include "arm_core.h"
 
+uint32_t decod_adr (uint32_t adr);
+int arm_branch_other_b_bl(arm_core p, uint32_t ins);
+int arm_branch_other_mrs (arm_core p, uint32_t ins);
 int arm_branch(arm_core p, uint32_t ins);
 int arm_coprocessor_others_swi(arm_core p, uint32_t ins);
 int arm_miscellaneous(arm_core p, uint32_t ins);
 
-int B(arm_core p, uint32_t ins);
-int MRS(arm_core p, uint32_t ins);
 
 #endif
