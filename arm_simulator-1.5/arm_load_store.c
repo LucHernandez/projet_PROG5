@@ -267,7 +267,7 @@ uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr){
 
 */
 
-uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address){
+uint8_t addr_mode_MULTIPLE(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address){
     if (get_bit(ins,22) && !arm_current_mode_has_spsr(p)){
         return DATA_ABORT;
     }
@@ -542,7 +542,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
     uint32_t address;
     uint32_t value;
 
-    if (addr_mode_M(p,ins,&start_address,&end_address)){
+    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)){
         return DATA_ABORT;
     }
 
@@ -612,7 +612,7 @@ int arm_load_store_LDM(arm_core p,uint32_t ins){
     uint32_t start_address,end_address;
     uint32_t address;
 
-    if (addr_mode_M(p,ins,&start_address,&end_address)){
+    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)){
         return DATA_ABORT;
     }
 
