@@ -33,12 +33,7 @@ uint32_t decod_adr (uint32_t adr){
     //si le bit est 1 alors ont set tout les bits jusqua 30 a 1
     //si non rien besoin de faire car ils sont deja egal a 0
     if(get_bit(adr,23)==1){
-        set_bit(adr,24);
-        set_bit(adr,25);
-        set_bit(adr,26);
-        set_bit(adr,27);
-        set_bit(adr,28);
-        set_bit(adr,29);
+        adr = set_bits(adr, 29, 24, 0b111111);
     }
 
     //ont shifte de 2 bit pour obtenire une adresse en 32 bits
@@ -54,13 +49,13 @@ int arm_branch_other_b_bl(arm_core p, uint32_t ins){
     //test si le bit L (bit 24) est a un 
     if (get_bit(ins,24)==1){
         //stock l'adresse de PC dans le registre 14 aussi nomee LR
-        arm_write_register(p,14,arm_read_register(p,PC));
+        arm_write_register(p,14,arm_read_register(p,15));
     }
 
     //decode le saut pour la suite des instruction a executer
     uint32_t adr=decod_adr(get_bits(ins,23,0));
 
-    arm_write_register(p,PC,arm_read_register(p,PC)+adr);
+    arm_write_register(p,15,arm_read_register(p,15)+adr);
 
     return 0;
 }
@@ -78,7 +73,7 @@ int arm_branche_other_mrs (arm_core p, uint32_t ins){
     //ont regarde le bit 22 qui nous dit si ont veut copier CPSR ou SPSR
     if(get_bit(ins,22)==1){
         //test si le mode actuel a bien un registre spcr
-        if(registers_current_mode_has_spsr(p)){
+        if(arm_current_mode_has_spsr(p)){
             arm_write_register(p,numero_reg,arm_read_spsr(p));
         }
         else{
