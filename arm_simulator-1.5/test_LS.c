@@ -8,11 +8,7 @@
 
 #define ADDRESS_MODE_WB 0
 #define ADDRESS_MODE_M 0
-#define ADDRESS_MODE_H 1
-
-
-
-
+#define ADDRESS_MODE_H 0
 
 void test_addr_mode_WB(arm_core p,uint32_t ins){
     arm_write_register(p,0,2);
@@ -164,6 +160,8 @@ int main(){
     
     
     if (ADDRESS_MODE_WB){
+
+        printf("test adressing mode : Word et Byte\n\n");
         //addr_mode_WB
         //IMM OFFSET
         uint32_t ins = 0x05801003 ;
@@ -197,6 +195,7 @@ int main(){
     }
 
     if (ADDRESS_MODE_H){
+        printf("test adressing mode : Halfword\n\n");
         //IMMEDIATE PRE_INDEXED
         uint32_t ins = 0x01E012F1;
         test_addr_mode_HALFWORD(p,ins);
@@ -220,6 +219,7 @@ int main(){
     }
 
     if (ADDRESS_MODE_M){
+        printf("test adressing mode : Multiple \n\n");
         //Increment After
         uint32_t ins = 0x08800002; //W = 0
         test_addr_mode_MULTIPLE(p,ins);
