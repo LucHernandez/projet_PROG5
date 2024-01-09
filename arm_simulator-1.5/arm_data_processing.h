@@ -26,32 +26,36 @@ Contact: Guillaume.Huard@imag.fr
 #include "arm_core.h"
 
 int arm_data_processing_instructions(arm_core p, uint32_t ins);
+int execute_operation(arm_core p, uint32_t ins, long res, uint8_t rd, uint8_t rn, uint32_t shifter_op, uint8_t carry_out, int cas);
 
 /**************************
 SECTION OPERATIONS LOGIQUES
 **************************/
-int execute_AND(arm_core p, uint32_t instruction);
-int execute_EOR(arm_core p, uint32_t instruction);
-int execute_TST(arm_core p, uint32_t instruction);
-int execute_TEQ(arm_core p, uint32_t instruction);
-int execute_CMP(arm_core p, uint32_t instruction);
-int execute_CMN(arm_core p, uint32_t instruction);
-int execute_ORR(arm_core p, uint32_t instruction);
-int execute_BIC(arm_core p, uint32_t instruction);
+int execute_AND(arm_core p, uint32_t ins);
+int execute_EOR(arm_core p, uint32_t ins);
+int execute_TST(arm_core p, uint32_t ins);
+int execute_TEQ(arm_core p, uint32_t ins);
+int execute_ORR(arm_core p, uint32_t ins);
+int execute_BIC(arm_core p, uint32_t ins);
+int execute_MOV(arm_core p, uint32_t ins);
+int execute_MVN(arm_core p, uint32_t ins);
 
 /*******************************
-SECTION OPERATIONS ARITHMETIQUES
+SECTION OPERATIONS ADDITIVES
 ********************************/
-int execute_operation(arm_core p, uint32_t ins, uint64_t res, uint8_t rd, uint8_t rn, uint32_t shifter_op);
+int execute_ADD(arm_core p, uint32_t ins);
+int execute_ADC(arm_core p, uint32_t ins);
+int execute_CMN(arm_core p, uint32_t ins);
+
+/*******************************
+SECTION OPERATIONS SUBSTRACTIVES
+********************************/
 int execute_SUB(arm_core p, uint32_t ins);
 int execute_RSB(arm_core p, uint32_t ins);
 int execute_SBC(arm_core p, uint32_t ins);
 int execute_RSC(arm_core p, uint32_t ins);
-int execute_ADD(arm_core p, uint32_t ins);
-int execute_ADC(arm_core p, uint32_t ins);
-int execute_MOV(arm_core p, uint32_t ins);
-int execute_MVN(arm_core p, uint32_t ins);
-int execute_moving(arm_core p, uint32_t ins, uint64_t res, uint8_t rd);
+int execute_CMP(arm_core p, uint32_t ins);
+
 
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
 
