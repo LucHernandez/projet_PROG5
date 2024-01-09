@@ -151,8 +151,8 @@ int main () {
     tester(0x7FFFFFFF, 1, ADC, (1<<N) | (1<<V), 0x80000001);
 
     printf("\nTesting CMN...\n");
-    tester(5, 7, CMN, 0, 0);
-    tester(0xFFFFFFFF, 1, CMN, (1<<Z) | (1<<C), 0);
+    tester(5, 7, CMN, 0, 0x80000001);
+    tester(0xFFFFFFFF, 1, CMN, (1<<Z) | (1<<C), 0x80000001);
 
     printf("\nTesting EOR...\n");
     tester(0b01101001010, 0b01010101010, EOR, 0, 0b00111100000);
@@ -171,12 +171,12 @@ int main () {
     tester(0, 0, MVN, (1<<N), 0xFFFFFFFF);
 
     printf("\nTesting TST...\n");
-    tester(0b01101001010, 0b01010101010, TST, 0, 0);
-    tester(0xFFFFFFFF, 0xF0000000, TST, (1<<N), 0);
+    tester(0b01101001010, 0b01010101010, TST, 0, -1);
+    tester(0xFFFFFFFF, 0xF0000000, TST, (1<<N), -1);
 
     printf("\nTesting TEQ...\n");
-    tester(0b01101001010, 0b01010101010, TEQ, 0, 0b111100000);
-    tester(0xFFFFFFFF, 0xF0000000, TEQ, 0, 0xFFFFFFF);
+    tester(0b01101001010, 0b01010101010, TEQ, 0, -1);
+    tester(0xFFFFFFFF, 0xF0000000, TEQ, 0, -1);
 
     printf("\nTesting SUB...\n");
     tester(7, 5, SUB, (1<<C), 2);
@@ -195,9 +195,9 @@ int main () {
     tester(0, 1, RSC, (1<<C), 1);
 
     printf("\nTesting CMP...\n");
-    tester(7, 5, CMP, (1<<C), 0);
-    tester(1, 2, CMP, (1<<N), 0);
-    tester(2, 2, CMP, (1<<Z) | (1<<C), 0);
+    tester(7, 5, CMP, (1<<C), 1);
+    tester(1, 2, CMP, (1<<N), 1);
+    tester(2, 2, CMP, (1<<Z) | (1<<C), 1);
 
 
     registers_destroy(r);
