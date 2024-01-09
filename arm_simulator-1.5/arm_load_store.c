@@ -124,7 +124,7 @@ uint8_t addr_mode_MULTIPLE(arm_core p,uint32_t ins,uint32_t *start_address,uint3
 
     uint8_t bit_P_U = get_bits(ins,24,23);
     uint8_t RnNum = get_bits(ins,19,16);
-    int32_t RnVal = arm_read_register(p,RnNum);
+    uint32_t RnVal = arm_read_register(p,RnNum);
     uint8_t bit_w = get_bit(ins,21);
     switch (bit_P_U){
         case 0b01:
@@ -354,7 +354,7 @@ int Number_Of_Set_Bits_In(uint32_t ins){
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE(p,ins,&addr,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)){
         return DATA_ABORT;
     }
     if(arm_write_word(p,addr,value)==-1){
@@ -366,7 +366,7 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE(p,ins,&addr,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)){
         return DATA_ABORT;
     }    
     if(arm_write_byte(p,addr,value)==-1){
@@ -378,7 +378,7 @@ int arm_load_store_STRB(arm_core p,uint32_t ins){
 int arm_load_store_STRH(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint16_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE(p,ins,&addr,1)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,1)){
         return DATA_ABORT;
     }
     if(get_bit(addr,0)==0){
@@ -420,12 +420,14 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 int arm_load_store_LDR(arm_core p,uint32_t ins){
     uint32_t address;
 
-    if(Recup_addresse_WORD_BYTE(p,ins,&address,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)){
         return DATA_ABORT;
     }
 
     uint32_t value;
-    int data =ror(arm_read_word(p,address,&value),8*get_bits(address,1,0));
+    arm_read_word(p,address,&value);
+    uint data =ror(value,8*get_bits(address,1,0));
+    printf("%d\n",data);
 
     if (get_bits(ins,15,12) == 15){
         arm_write_register(p,15,data & 0xFFFFFFFE);
@@ -442,7 +444,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
     // Rd = Memory[address,1]
     uint32_t address = 0;
 
-    if(Recup_addresse_WORD_BYTE(p,ins,&address,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)){
         return DATA_ABORT;
     }
 
@@ -457,7 +459,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
 
 int arm_load_store_LDRH(arm_core p,uint32_t ins){
     uint32_t address;
-    if(Recup_addresse_WORD_BYTE(p,ins,&address,1)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,1)){
         return DATA_ABORT;
     }
     uint16_t data = 0;
