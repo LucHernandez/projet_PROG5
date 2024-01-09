@@ -15,7 +15,7 @@ if HAVE_ARM_COMPILER
 SUBDIRS=. Examples
 endif
 
-bin_PROGRAMS=arm_simulator send_irq memory_test registers_test data_processing_tests test_LS
+bin_PROGRAMS=arm_simulator send_irq memory_test registers_test test_data_processing test_LS
 
  
 COMMON=csapp.h csapp.c scanner.h scanner.l debug.h debug.c \
@@ -33,7 +33,7 @@ COMMON=csapp.h csapp.c scanner.h scanner.l debug.h debug.c \
 
 arm_simulator_SOURCES=$(COMMON) arm_simulator.c
 
-data_processing_tests_SOURCES = $(COMMON) data_processing_tests.c
+test_data_processing_SOURCES = $(COMMON) test_data_processing.c
 
 send_irq_SOURCES=send_irq.c csapp.h csapp.c arm_constants.h arm_constants.c
 
