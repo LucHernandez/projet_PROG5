@@ -163,7 +163,7 @@ uint8_t addr_mode_MULTIPLE(arm_core p,uint32_t ins,uint32_t *start_address,uint3
 
 /*Fonction qui permet de recuperer l'adresse memoire calculer pour le LDR/STR et le LDRB/STRB */
 
-int Recup_addresse_WORD_BYTE(arm_core p,uint32_t ins,uint32_t* addr,int flag_Half){
+int Recup_addresse_WORD_BYTE_HALF(arm_core p,uint32_t ins,uint32_t* addr,int flag_Half){
 
     int bit_i=get_bit(ins,25);
     if(flag_Half == 1)bit_i = get_bit(ins,22);
