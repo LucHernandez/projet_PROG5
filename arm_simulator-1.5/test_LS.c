@@ -4,9 +4,10 @@
 #include "arm_core.h"
 #include "util.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define ADDRESS_MODE_WB 0
-#define ADDRESS_MODE_M 1
+#define ADDRESS_MODE_M 0
 #define ADDRESS_MODE_H 1
 
 
@@ -25,6 +26,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
         retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
+            exit(1);
         }
         
         printf("address = %d\n",address);
@@ -37,6 +39,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
         retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
+            exit(1);
         }
         printf("address = %d\n",address);
         printf("R0 = %d\n",arm_read_register(p,0));
@@ -49,6 +52,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
         retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
+            exit(1);
         }
         printf("address = %d\n",address);
         printf("R0 = %d\n",arm_read_register(p,0));
@@ -61,8 +65,60 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     printf("\n");
 }
 
+void test_addr_mode_HALFWORD(arm_core p,uint32_t ins){
+    arm_write_register(p,0,2);
+    arm_write_register(p,1,4);
 
-void test_addr_mode_M(arm_core p,uint32_t ins){
+    uint8_t bitP = get_bit(ins,24);
+    uint8_t bitW = get_bit(ins,21);
+    uint8_t bit22 = get_bit(ins,22);
+    if (bitP){
+        if (bit22){
+            if (bitW){
+                printf("IMMEDIATE PRE-INDEXED\n");
+            }
+            else{
+                printf("IMMEDIATE OFFSET\n");
+            }
+        }
+        else{
+            if (bitW){
+                printf("REGISTER PRE-INDEXED\n");
+            }
+            else{
+                printf("REGISTER OFFSET\n");
+            }
+        }
+    }
+    else {
+        if (!bitW){
+            if (bit22){
+                printf("IMMEDIATE POST-INDEXED\n");
+            }
+            else{
+                printf("REGISTER POST-INDEXED\n");
+            }
+        }
+        else{
+            printf("UNPREDICTABLE");
+        }
+    }
+
+    uint8_t retour;
+    uint32_t address = 0;
+    retour = Recup_addresse_WORD_BYTE(p,ins,&address,1);
+    if (retour){
+        printf("erreur de sortie de addr_mode_WB\n");
+        exit(1);
+    }
+    
+    printf("address = %d\n",address);
+    printf("R%d = %d\n",get_bits(ins,19,16),arm_read_register(p,0));
+    printf("R%d = %d\n",get_bits(ins,15,12),arm_read_register(p,1));
+
+}
+
+void test_addr_mode_MULTIPLE(arm_core p,uint32_t ins){
     uint8_t RnNum = get_bits(ins,19,16);
     arm_write_register(p,0,2);
     arm_write_register(p,1,4);
@@ -85,9 +141,10 @@ void test_addr_mode_M(arm_core p,uint32_t ins){
             printf("address_mode : Decrement Before W = %d\n",get_bit(ins,21));
             break;
     }
-    retour = addr_mode_M(p,ins,&start_address,&end_address);
+    retour = addr_mode_MULTIPLE(p,ins,&start_address,&end_address);
     if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
+            exit(1);
         }
     printf("Rd = R%u = %u\n",RnNum,arm_read_register(p,RnNum));
     for (i = 0; i<16;++i){
@@ -139,30 +196,53 @@ int main(){
         test_addr_mode_WB(p,ins);
     }
 
+    if (ADDRESS_MODE_H){
+        //IMMEDIATE PRE_INDEXED
+        uint32_t ins = 0x01E012F1;
+        test_addr_mode_HALFWORD(p,ins);
+        //IMMEDDIATE OFFSET
+        ins = 0x01C012F1;
+        test_addr_mode_HALFWORD(p,ins);
+        //IMMEDDIATE POST-INDEXED
+        ins = 0x00C012F1;
+        test_addr_mode_HALFWORD(p,ins);
+
+
+        //REGISTER PRE-INDEXED
+        ins = 0x01A012F1;
+        test_addr_mode_HALFWORD(p,ins);
+        //REGISTER OFFSET
+        ins = 0x018012F1;
+        test_addr_mode_HALFWORD(p,ins);
+        //REGISTER POST-INDEXED
+        ins = 0x008012F1;
+        test_addr_mode_HALFWORD(p,ins);
+    }
+
     if (ADDRESS_MODE_M){
         //Increment After
         uint32_t ins = 0x08800002; //W = 0
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
         ins = 0x08A00002;          //W = 1
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
 
         //Increment Before
         ins = 0x09800002;           //W = 0
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
         ins = 0x09A00002;          //W = 1
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
 
         //Decrement After
         ins = 0x08000002;          //W = 0
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
         ins = 0x08200002;          //W = 1
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
 
         //Decrement Before
         ins = 0x09000002;          //W = 0
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
         ins = 0x09200002;          //W = 1
-        test_addr_mode_M(p,ins);
+        test_addr_mode_MULTIPLE(p,ins);
 
     }
 
