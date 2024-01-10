@@ -158,13 +158,13 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
     uint8_t RnNum = get_bits(ins,19,16);
     uint8_t RdNum = get_bits(ins,15,12);
     uint32_t value;
-
+    uint32_t addr;
     uint8_t bitL = get_bit(ins,20);
 
-    arm_write_register(p,0,2);
+    arm_write_register(p,0,4);
     arm_write_register(p,1,4);
     arm_write_register(p,2,3);
-    arm_write_word(p,arm_read_register(p,RnNum),24);
+    arm_write_word(p,arm_read_register(p,RnNum),500);
 
     if (bitL){
         printf("avant lancement de la fonction teste :\n");
@@ -176,11 +176,13 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
 
         arm_load_store(p,ins);
 
+        Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
+
         printf("apres lancement de la fonction teste :\n");
         printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
         
-        arm_read_word(p,arm_read_register(p,RnNum),&value);
+        arm_read_word(p,addr,&value);
         printf("valeur dans la memoire apres %u\n",value);
     }
     else{
@@ -197,7 +199,9 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
         printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
         
-        arm_read_word(p,arm_read_register(p,RdNum),&value);
+        Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
+
+        arm_read_word(p,addr,&value);
         printf("valeur dans la memoire apres %u\n",value);
     }
     printf("\n\n");
@@ -302,7 +306,7 @@ int main(){
 
     uint32_t ins = 0x07901000; //LDR
     test_LDR_STR_et_plus(p,ins);
-
+    //0000 0101 1001 0000 0001 0000 0000 0000
     ins = 0x07801000; //LDR
     test_LDR_STR_et_plus(p,ins);
 
