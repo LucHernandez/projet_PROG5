@@ -427,7 +427,6 @@ int arm_load_store_LDR(arm_core p,uint32_t ins){
     uint32_t value;
     arm_read_word(p,address,&value);
     uint data =ror(value,8*get_bits(address,1,0));
-    printf("%d\n",data);
 
     if (get_bits(ins,15,12) == 15){
         arm_write_register(p,15,data & 0xFFFFFFFE);

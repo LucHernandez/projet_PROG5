@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define ADDRESS_MODE_TEST 0
 #define ADDRESS_MODE_WB 0
 #define ADDRESS_MODE_M 0
 #define ADDRESS_MODE_H 0
@@ -19,7 +20,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     if (get_bit(ins,25) == 0){
         printf("addressing_mode : Immediate\n");
 
-        retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
+        retour = Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
             exit(1);
@@ -32,7 +33,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     else if (get_bit(ins,25) && get_bits(ins,11,4) != 0){
         printf("addressing_mode : Scaled\n");
         
-        retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
+        retour = Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
             exit(1);
@@ -45,7 +46,7 @@ void test_addr_mode_WB(arm_core p,uint32_t ins){
     else if (get_bit(ins,25) && get_bits(ins,11,4) == 0) {
         printf("addressing_mode : Register\n");
 
-        retour = Recup_addresse_WORD_BYTE(p,ins,&address,0);
+        retour = Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0);
         if (retour){
             printf("erreur de sortie de addr_mode_WB\n");
             exit(1);
@@ -102,7 +103,7 @@ void test_addr_mode_HALFWORD(arm_core p,uint32_t ins){
 
     uint8_t retour;
     uint32_t address = 0;
-    retour = Recup_addresse_WORD_BYTE(p,ins,&address,1);
+    retour = Recup_addresse_WORD_BYTE_HALF(p,ins,&address,1);
     if (retour){
         printf("erreur de sortie de addr_mode_WB\n");
         exit(1);
@@ -153,11 +154,56 @@ void test_addr_mode_MULTIPLE(arm_core p,uint32_t ins){
     printf("\n");
 }
 
-int main(){
-    registers reg = registers_create();
-    memory mem = memory_create(1024);
-    arm_core p = arm_create(reg,mem);
-    
+void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
+    uint8_t RnNum = get_bits(ins,19,16);
+    uint8_t RdNum = get_bits(ins,15,12);
+    uint32_t value;
+
+    uint8_t bitL = get_bit(ins,20);
+
+    arm_write_register(p,0,2);
+    arm_write_register(p,1,4);
+    arm_write_register(p,2,3);
+    arm_write_word(p,arm_read_register(p,RnNum),8é);
+
+    if (bitL){
+        printf("avant lancement de la fonction teste :\n");
+        printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+        printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
+
+        arm_read_word(p,arm_read_register(p,RnNum),&value);
+        printf("valeur dans la memoire avant %u\n\n",value);
+
+        arm_load_store(p,ins);
+
+        printf("apres lancement de la fonction teste :\n");
+        printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+        printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
+        
+        arm_read_word(p,arm_read_register(p,RnNum),&value);
+        printf("valeur dans la memoire apres %u\n",value);
+    }
+    else{
+        printf("avant lancement de la fonction teste :\n");
+        printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+        printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
+
+        arm_read_word(p,arm_read_register(p,RnNum),&value);
+        printf("valeur dans la memoire avant %u\n\n",value);
+
+        arm_load_store(p,ins);
+
+        printf("apres lancement de la fonction teste :\n");
+        printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+        printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
+        
+        arm_read_word(p,arm_read_register(p,RdNum),&value);
+        printf("valeur dans la memoire apres %u\n",value);
+    }
+    printf("\n\n");
+}
+
+void test_addr_mode(arm_core p){
     
     if (ADDRESS_MODE_WB){
 
@@ -245,6 +291,20 @@ int main(){
         test_addr_mode_MULTIPLE(p,ins);
 
     }
+}
+
+int main(){
+    registers reg = registers_create();
+    memory mem = memory_create(1024);
+    arm_core p = arm_create(reg,mem);
+
+    if (ADDRESS_MODE_TEST) test_addr_mode(p);
+
+    uint32_t ins = 0x07901000; //LDR
+    test_LDR_STR_et_plus(p,ins);
+
+    ins = 0x07801000; //LDR
+    test_LDR_STR_et_plus(p,ins);
 
     registers_destroy(reg);
     memory_destroy(mem);
