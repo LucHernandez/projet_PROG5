@@ -15,16 +15,16 @@
 #define TEST_LDRB 0
 #define TEST_LDRH 0
 
-#define TEST_STR 0
-#define TEST_STRB 0
-#define TEST_STRH 0
+#define TEST_STR 1
+#define TEST_STRB 1
+#define TEST_STRH 1
 
 #define TEST_IMMEDIATE 1
 #define TEST_REGISTER 1
 #define TEST_SCALED_REGISTER 1
 
-#define TEST_LDM 1
-#define TEST_STM 1
+#define TEST_LDM 0
+#define TEST_STM 0
 
 #define TEST_INCREMENT_BEFORE 1
 #define TEST_INCREMENT_AFTER 1
@@ -278,17 +278,20 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
     arm_write_register(p,0,12);
     arm_write_register(p,1,8);
     arm_write_register(p,2,4);
-    arm_write_word(p,arm_read_register(p,RnNum),4);
+    Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
+    arm_write_register(p,0,12);
+    arm_write_register(p,1,8);
+    arm_write_register(p,2,4);
+    arm_write_word(p,addr,4);
 
     if (bitL){
         printf("avant lancement de la fonction teste :\n");
         printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
         
-        Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
 
         arm_read_word(p,addr,&value);
-        printf("valeur dans la memoire avant %u\n\n",value);
+        printf("valeur dans la memoire[%u] avant %u\n\n",addr,value);
 
         arm_load_store(p,ins);
 
@@ -297,17 +300,15 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
         
         arm_read_word(p,addr,&value);
-        printf("valeur dans la memoire apres %u\n",value);
+        printf("valeur dans la memoire[%u] apres %u\n",addr,value);
     }
     else{
         printf("avant lancement de la fonction teste :\n");
         printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
-
-        Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
         
         arm_read_word(p,addr,&value);
-        printf("valeur dans la memoire avant %u\n\n",value);
+        printf("valeur dans la memoire[%u] avant %u\n\n",addr,value);
 
         arm_load_store(p,ins);
 
@@ -316,7 +317,7 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
 
         arm_read_word(p,addr,&value);
-        printf("valeur dans la memoire apres %u\n",value);
+        printf("valeur dans la memoire[%u] apres %u\n",addr,value);
     }
     printf("\n\n");
 }
@@ -324,97 +325,99 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
 void instruction_str(arm_core p){
     printf("STR\n");
     if (TEST_IMMEDIATE){
-        uint32_t ins = 0x05801003 ;
+        printf("IMM OFFSET\n");
+        uint32_t ins = 0x05801002 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM PRE-INDEXED
-        ins = 0x05A01003 ;
+        printf("IMM PRE-INDEXED\n");
+        ins = 0x05A01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM POST-INDEXED
-        ins = 0x04801003 ;
+        printf("IMM POST-INDEXED\n");
+        ins = 0x04801002 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-    //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         uint32_t ins = 0x07801002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         ins = 0x07A01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x06801002 ;
         test_LDR_STR_et_plus(p,ins);
     }
 
     if (TEST_SCALED_REGISTER){
-        //SCALED REGISTER OFFSET
+        printf("SCALED REGISTER OFFSET\n");
         uint32_t ins = 0x07801082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SACLED REGISTER PRE-INDEXED
+        printf("SACLED REGISTER PRE-INDEXED\n");
         ins = 0x07A01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SCALED REGISTER POST-INDEXED
+        printf("SCALED REGISTER POST-INDEXED\n");
         ins = 0x06801082 ;
         test_LDR_STR_et_plus(p,ins);
     }
 }
 
 void instruction_strb(arm_core p){
-    printf("STR\n");
+    printf("STRB\n");
     if (TEST_IMMEDIATE){
         uint32_t ins = 0x05C01003 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM PRE-INDEXED
-        ins = 0x05E01003 ;
+        printf("IMM PRE-INDEXED\n");
+        ins = 0x05E01003;
         test_LDR_STR_et_plus(p,ins);
-        //IMM POST-INDEXED
+        printf("IMM POST-INDEXED\n");
         ins = 0x04C01003 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-    //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         uint32_t ins = 0x07C01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         ins = 0x07E01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x06C01002 ;
         test_LDR_STR_et_plus(p,ins);
     }
 
     if (TEST_SCALED_REGISTER){
-        //SCALED REGISTER OFFSET
+        printf("SCALED REGISTER OFFSET\n");
         uint32_t ins = 0x07C01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SACLED REGISTER PRE-INDEXED
+        printf("SACLED REGISTER PRE-INDEXED\n");
         ins = 0x07E01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SCALED REGISTER POST-INDEXED
+        printf("SCALED REGISTER POST-INDEXED\n");
         ins = 0x06C01082 ;
         test_LDR_STR_et_plus(p,ins);
     }
 }
 
 void instruction_strh(arm_core p){
+    printf("STRH\n");
     if (TEST_IMMEDIATE){
-    //IMMEDIATE PRE_INDEXED
+        printf("IMMEDIATE PRE_INDEXED\n");
         uint32_t ins = 0x01E012F1;
         test_LDR_STR_et_plus(p,ins);
-        //IMMEDDIATE OFFSET
+        printf("IMMEDDIATE OFFSET\n");
         ins = 0x01C012F1;
         test_LDR_STR_et_plus(p,ins);
-        //IMMEDDIATE POST-INDEXED
+        printf("IMMEDDIATE POST-INDEXED\n");
         ins = 0x00C012F1;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         uint32_t ins = 0x01A012F1;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         ins = 0x018012F1;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x008012F1;
         test_LDR_STR_et_plus(p,ins);
     }
@@ -425,32 +428,32 @@ void instruction_ldr(arm_core p){
     if (TEST_IMMEDIATE){
         uint32_t ins = 0x05901003 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM PRE-INDEXED
+        printf("IMM PRE-INDEXED\n");
         ins = 0x05B01003 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM POST-INDEXED
+        printf("IMM POST-INDEXED\n");
         ins = 0x04901003 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-        //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         uint32_t ins = 0x07901002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         ins = 0x07B01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x06901002 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_SCALED_REGISTER){
-        //SCALED REGISTER OFFSET
+        printf("SCALED REGISTER OFFSET\n");
         uint32_t ins = 0x07901082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SACLED REGISTER PRE-INDEXED
+        printf("SCALED REGISTER PRE-INDEXED\n");
         ins = 0x07B01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SCALED REGISTER POST-INDEXED
+        printf("SCALED REGISTER POST-INDEXED\n");
         ins = 0x06901082 ;
         test_LDR_STR_et_plus(p,ins);
     }
@@ -461,57 +464,58 @@ void instruction_ldrb(arm_core p){
     if (TEST_IMMEDIATE){
         uint32_t ins = 0x05D01003 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM PRE-INDEXED
+        printf("IMM PRE-INDEXED\n");
         ins = 0x05F01003 ;
         test_LDR_STR_et_plus(p,ins);
-        //IMM POST-INDEXED
+        printf("IMM POST-INDEXED\n");
         ins = 0x04D01003 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-        //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         uint32_t ins = 0x07D01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         ins = 0x07F01002 ;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x06D01002 ;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_SCALED_REGISTER){
-        //SCALED REGISTER OFFSET
+        printf("SCALED REGISTER OFFSET\n");
         uint32_t ins = 0x07D01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SACLED REGISTER PRE-INDEXED
+        printf("SCALED REGISTER PRE-INDEXED\n");
         ins = 0x07F01082 ;
         test_LDR_STR_et_plus(p,ins);
-        //SCALED REGISTER POST-INDEXED
+        printf("SCALED REGISTER POST-INDEXED\n");
         ins = 0x06D01082 ;
         test_LDR_STR_et_plus(p,ins);
     }
 }
 
 void instruction_ldrh(arm_core p){
+    printf("LDRH\n");
     if (TEST_IMMEDIATE){
-    //IMMEDIATE PRE_INDEXED
+        printf("IMMEDIATE PRE_INDEXED\n");
         uint32_t ins = 0x01F012F1;
         test_LDR_STR_et_plus(p,ins);
-        //IMMEDDIATE OFFSET
+        printf("IMMEDDIATE OFFSET\n");
         ins = 0x01D012F1;
         test_LDR_STR_et_plus(p,ins);
-        //IMMEDDIATE POST-INDEXED
+        printf("IMMEDDIATE POST-INDEXED\n");
         ins = 0x00D012F1;
         test_LDR_STR_et_plus(p,ins);
     }
     if (TEST_REGISTER){
-        //REGISTER PRE-INDEXED
+        printf("REGISTER PRE-INDEXED\n");
         uint32_t ins = 0x01B012F1;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER OFFSET
+        printf("REGISTER OFFSET\n");
         ins = 0x019012F1;
         test_LDR_STR_et_plus(p,ins);
-        //REGISTER POST-INDEXED
+        printf("REGISTER POST-INDEXED\n");
         ins = 0x009012F1;
         test_LDR_STR_et_plus(p,ins);
     }
@@ -526,58 +530,69 @@ void test_LDM_STM(arm_core p,uint32_t ins){
     arm_write_register(p,2,4);
     uint8_t i;
     uint8_t RnNum = get_bits(ins,19,16);
-    uint32_t RnVal = arm_read_register(p,RnNum);
     uint32_t valreg;
     uint32_t value;
+    uint32_t addr = 0;
+    uint32_t end_address = 0;
 
+    addr_mode_MULTIPLE(p,ins,&addr,&end_address);
+
+    uint32_t addr2 = addr;
+
+    arm_write_register(p,0,12);
+    arm_write_register(p,1,8);
+    arm_write_register(p,2,4);
+
+    for (i=0;i<16;++i){
+        if (get_bit(ins,i)){
+            valreg = arm_read_register(p,i);
+            printf("R%u = %u\n",i,valreg);
+            arm_read_word(p,addr,&value);
+            printf("Memory[%u] = %u\n",addr,value);
+            addr+=4;
+        }
+    }
     printf("Rn = R%u = %u\n",RnNum,arm_read_register(p,RnNum));
-    arm_read_word(p,valreg,&value);
-    printf("Memory[%u] = %u\n",RnVal,value);
-    for (i=0;i<16;++i){
-        if (get_bit(ins,i)){
-            valreg = arm_read_register(p,i);
-            printf("R%u = %u\n",i,valreg);
-        }
-    }
-    
 
-    arm_load_store_multiple(p,ins); 
+    arm_load_store_multiple(p,ins);
 
     for (i=0;i<16;++i){
         if (get_bit(ins,i)){
             valreg = arm_read_register(p,i);
             printf("R%u = %u\n",i,valreg);
+            arm_read_word(p,addr2,&value);
+            printf("Memory[%u] = %u\n",addr2,value);
+            addr2+=4;
         }
     }
-
-    printf("\n\n");
+    printf("\n\n");   
 }
 
 void instruction_stm(arm_core p){
     printf("STM\n");
     if (TEST_INCREMENT_AFTER){
-        //Increment After
+        printf("Increment After");
         uint32_t ins = 0x08800004; //W = 0
         test_LDM_STM(p,ins);
         ins = 0x08A00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_INCREMENT_BEFORE){
-        //Increment Before
+        printf("Increment Before");
         uint32_t ins = 0x09800004;           //W = 0
         test_LDM_STM(p,ins);
         ins = 0x09A00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_AFTER){
-        //Decrement After
+        printf("Decrement After");
         uint32_t ins = 0x08000004;          //W = 0
         test_LDM_STM(p,ins);
         ins = 0x08200004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_BEFORE){
-        //Decrement Before
+        printf("Decrement Before");
         uint32_t ins = 0x09000004;          //W = 0
         test_LDM_STM(p,ins);
         ins = 0x09200004;          //W = 1
@@ -588,28 +603,28 @@ void instruction_stm(arm_core p){
 void instruction_ldm(arm_core p){
     printf("LDM\n");
     if (TEST_INCREMENT_AFTER){
-        //Increment After
+        printf("Increment After");
         uint32_t ins = 0x08900004; //W = 0
         test_LDM_STM(p,ins);
         ins = 0x08B00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_INCREMENT_BEFORE){
-        //Increment Before
+        printf("Increment Before");
         uint32_t ins = 0x09900004;           //W = 0
         test_LDM_STM(p,ins);
         ins = 0x09B00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_AFTER){
-        //Decrement After
+        printf("Decrement After");
         uint32_t ins = 0x08100004;          //W = 0
         test_LDM_STM(p,ins);
         ins = 0x08300004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_BEFORE){
-        //Decrement Before
+        printf("Decrement Before");
         uint32_t ins = 0x09100004;          //W = 0
         test_LDM_STM(p,ins);
         ins = 0x09300004;          //W = 1
