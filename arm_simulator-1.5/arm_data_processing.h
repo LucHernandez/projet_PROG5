@@ -26,7 +26,7 @@ Contact: Guillaume.Huard@imag.fr
 #include "arm_core.h"
 
 int arm_data_processing_instructions(arm_core p, uint32_t ins);
-int execute_operation(arm_core p, uint32_t ins, long res, uint8_t rd, uint8_t rn, uint32_t shifter_op, uint8_t carry_out, int cas);
+int execute_operation(arm_core p, uint32_t ins, long res, uint8_t rd, uint32_t rn, uint32_t shifter_op, uint8_t carry_out, int cas);
 
 /**************************
 SECTION OPERATIONS LOGIQUES

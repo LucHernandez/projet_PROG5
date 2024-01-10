@@ -131,64 +131,64 @@ int main () {
     printf("Register RoR by imm: %d\n", (get_shifter_operand(p, basenI | rorimm, NULL) == ror(8, 3)));
     printf("Register RoR by reg: %d\n", (get_shifter_operand(p, basenI | rorreg, NULL) == ror(8, 3)));
 
-    // printf("\nTesting AND...\n");
-    // tester(0b01101001010, 0b01010101010, AND, 0, 0b01000001010);
-    // tester(0b1010101, 0, AND, (1<<Z), 0);
-    // tester(0xFFFFFFFF, 0xF0000000, AND, (1<<N), 0xF0000000);
+    printf("\nTesting AND...\n");
+    tester(0b01101001010, 0b01010101010, AND, 0, 0b01000001010);
+    tester(0b1010101, 0, AND, (1<<Z), 0);
+    tester(0xFFFFFFFF, 0xF0000000, AND, (1<<N), 0xF0000000);
 
-    // printf("\nTesting ORR...\n");
-    // tester(0b01101001010, 0b01010101010, ORR, 0, 0b01111101010);
-    // tester(0, 0, ORR, 1<<Z, 0);
-    // tester(0xFFFFFFFF, 0, ORR, (1<<N), 0xFFFFFFFF);
+    printf("\nTesting ORR...\n");
+    tester(0b01101001010, 0b01010101010, ORR, 0, 0b01111101010);
+    tester(0, 0, ORR, 1<<Z, 0);
+    tester(0xFFFFFFFF, 0, ORR, (1<<N), 0xFFFFFFFF);
 
-    // printf("\nTesting ADD...\n");
-    // tester(5, 7, ADD, 0, 12);
-    // tester(0xFFFFFFFF, 1, ADD, (1<<Z) | (1<<C), 0);
-    // tester(0x7FFFFFFF, 1, ADD, (1<<N) | (1<<V), 0x80000000);
-    // tester(0xFFFFFFFF, 0x80000000, ADD, (1<<V)| (1<<C), 0x7FFFFFFF);
+    printf("\nTesting ADD...\n");
+    tester(5, 7, ADD, 0, 12);
+    tester(0xFFFFFFFF, 1, ADD, (1<<Z) | (1<<C), 0);
+    tester(0x7FFFFFFF, 1, ADD, (1<<N) | (1<<V), 0x80000000);
+    tester(0xFFFFFFFF, 0x80000000, ADD, (1<<V)| (1<<C), 0x7FFFFFFF);
 
-    // printf("\nTesting ADC...\n");
-    // tester(5, 7, ADC, 0, 12);
-    // tester(0xFFFFFFFF, 1, ADC, (1<<Z) | (1<<C), 0);
-    // tester(0x7FFFFFFF, 1, ADC, (1<<N) | (1<<V), 0x80000001);
-    // tester(0xFFFFFFFF, 0x80000000, ADC, (1<<V)| (1<<C), 0x7FFFFFFF);
+    printf("\nTesting ADC...\n");
+    tester(5, 7, ADC, 0, 13);
+    tester(0xFFFFFFFF, 1, ADC, (1<<Z) | (1<<C), 0);
+    tester(0x7FFFFFFF, 1, ADC, (1<<N) | (1<<V), 0x80000001);
+    tester(0xFFFFFFFF, 0x80000000, ADC, (1<<V)| (1<<C), 0x7FFFFFFF);
 
-    // printf("\nTesting CMN...\n");
-    // tester(5, 7, CMN, 0, 0x7FFFFFFF);
-    // tester(0xFFFFFFFF, 1, CMN, (1<<Z) | (1<<C), 0x7FFFFFFF);
-    // tester(0x7FFFFFFF, 1, CMN, (1<<N) | (1<<V), 0x7FFFFFFF);
-    // tester(0xFFFFFFFF, 0x80000000, CMN, (1<<V)| (1<<C), 0x7FFFFFFF);
+    printf("\nTesting CMN...\n");
+    tester(-1, 1, CMN, (1<<Z) | (1<<C), 0x7FFFFFFF);
+    tester(0x7FFFFFFF, 1, CMN, (1<<N) | (1<<V), 0x7FFFFFFF);
+    tester(-1, 0x80000000, CMN, (1<<V)| (1<<C), 0x7FFFFFFF);
+    tester(5, 7, CMN, 0, 0x7FFFFFFF);
 
-    // printf("\nTesting EOR...\n");
-    // tester(0b01101001010, 0b01010101010, EOR, 0, 0b00111100000);
-    // tester(0x80000000, 0, EOR, (1<<N), 0x80000000);
-    // tester(0, 0, EOR, (1<<Z), 0);
+    printf("\nTesting EOR...\n");
+    tester(0b01101001010, 0b01010101010, EOR, 0, 0b00111100000);
+    tester(0x80000000, 0, EOR, (1<<N), 0x80000000);
+    tester(0, 0, EOR, (1<<Z), 0);
 
-    // printf("\nTesting MOV...\n");
-    // tester(0, 0xABCDEF, MOV, 0, 0xABCDEF);
-    // tester(0, 0xFFFFFFFF, MOV, (1<<N), 0xFFFFFFFF);
-    // tester(0, 0, MOV, (1<<Z), 0);
+    printf("\nTesting MOV...\n");
+    tester(0, 0xABCDEF, MOV, 0, 0xABCDEF);
+    tester(0, 0xFFFFFFFF, MOV, (1<<N), 0xFFFFFFFF);
+    tester(0, 0, MOV, (1<<Z), 0);
 
-    // printf("\nTesting BIC...\n");
-    // tester(0xFFFFFFFF, 0xF0000000, BIC, 0, 0x0FFFFFFF);
-    // tester(0X80000000, 0x7FFFFFFF, BIC, (1<<N), 0x80000000);
-    // tester(0xFFFFFFFF, 0xFFFFFFFF, BIC, (1<<Z), 0);
+    printf("\nTesting BIC...\n");
+    tester(0xFFFFFFFF, 0xF0000000, BIC, 0, 0x0FFFFFFF);
+    tester(0X80000000, 0x7FFFFFFF, BIC, (1<<N), 0x80000000);
+    tester(0xFFFFFFFF, 0xFFFFFFFF, BIC, (1<<Z), 0);
 
-    // printf("\nTesting MVN...\n");
-    // tester(0, 0xFFFFFCB5,  MVN, 0, 0b01101001010);
-    // tester(0, 0, MVN, (1<<N), 0xFFFFFFFF);
-    // tester(0, 0xFFFFFFFF, MVN, (1<<Z), 0);
+    printf("\nTesting MVN...\n");
+    tester(0, 0xFFFFFCB5,  MVN, 0, 0b01101001010);
+    tester(0, 0, MVN, (1<<N), 0xFFFFFFFF);
+    tester(0, 0xFFFFFFFF, MVN, (1<<Z), 0);
 
 
-    // printf("\nTesting TST...\n");
-    // tester(0b01101001010, 0b01010101010, TST, 0, 0);
-    // tester(0xFFFFFFFF, 0xF0000000, TST, (1<<N), 0);
-    // tester(0xFFFFFFFF, 0, TST, (1<<Z), 0);
+    printf("\nTesting TST...\n");
+    tester(0b01101001010, 0b01010101010, TST, 0, 0);
+    tester(0xFFFFFFFF, 0xF0000000, TST, (1<<N), 0);
+    tester(0xFFFFFFFF, 0, TST, (1<<Z), 0);
 
-    // printf("\nTesting TEQ...\n");
-    // tester(0b01101001010, 0b01010101010, TEQ, 0, 0);
-    // tester(0x00000000, 0xF0000000, TEQ, (1<<N), 0);
-    // tester(0, 0, TEQ, (1<<Z), 0);
+    printf("\nTesting TEQ...\n");
+    tester(0b01101001010, 0b01010101010, TEQ, 0, 0);
+    tester(0x00000000, 0xF0000000, TEQ, (1<<N), 0);
+    tester(0, 0, TEQ, (1<<Z), 0);
 
     printf("\nTesting SUB...\n");
     tester(0xF0000000, 0x7FFFFFFF, SUB, (1<<V) | (1<<C), 0x70000001);
@@ -202,18 +202,23 @@ int main () {
     tester(5, 7, RSB, (1<<C), 2);
     tester(2, 1, RSB, (1<<N), 0xFFFFFFFF);
 
-    // printf("\nTesting SBC...\n");
-    // tester(5, 7, SBC, (1<<N), -3);
-    // tester(0, 1, SBC, (1<<N), -2);
+    printf("\nTesting SBC...\n");
+    tester(5, 7, SBC, (1<<N), -3);
+    tester(7, 5, SBC, (1<<C), 1);
+    tester(1, 1, SBC, (1<<Z) | (1<<C), 0);
+    tester(0xF0000000, 0x7FFFFFFF, SBC, (1<<V) | (1<<C), 0x70000001);
 
-    // printf("\nTesting RSC...\n");
-    // tester(5, 7, RSC, (1<<C), 1);
-    // tester(0, 1, RSC, (1<<C), 1);
+    printf("\nTesting RSC...\n");
+    tester(5, 7, RSC, (1<<C), 2);
+    tester(7, 5, RSC, (1<<N), -2);
+    tester(0, 1, RSC, (1<<Z) | (1<<C), 0);
+    tester(0x7FFFFFFF, 0xF0000000, RSC, (1<<V) | (1<<C), 0x70000001);
 
-    // printf("\nTesting CMP...\n");
-    // tester(7, 5, CMP, (1<<C), 1);
-    // tester(1, 2, CMP, (1<<N), 1);
-    // tester(2, 2, CMP, (1<<Z) | (1<<C), 1);
+    printf("\nTesting CMP...\n");
+    tester(0xF0000000, 0x7FFFFFFF, CMP, (1<<V) | (1<<C), 0x70000001);
+    tester(0xF, 0xF, CMP, (1<<Z) | (1<<C), 0x70000001);
+    tester(7, 5, CMP, (1<<C), 0x70000001);
+    tester(1, 2, CMP, (1<<N), 0x70000001);
 
 
     registers_destroy(r);
