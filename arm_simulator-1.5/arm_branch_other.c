@@ -66,17 +66,17 @@ int arm_miscellaneous(arm_core p, uint32_t ins) {
 }
 
 uint32_t decod_adr (uint32_t adr){
-    //ont etant le 23 eme bit 
-    //si le bit est 1 alors ont set tout les bits jusqua 30 a 1
-    //si non rien besoin de faire car ils sont deja egal a 0
+    //on etend le 23 eme bit 
+    //si le bit est 1 alors on set tout les bits jusqu'a 30 a 1
+    //si non rien besoin de faire car ils sont deja egaux a 0
     if(get_bit(adr,23)==1){
         adr = set_bits(adr, 29, 24, 0b111111);
     }
 
-    //ont shifte de 2 bit pour obtenire une adresse en 32 bits
+    //on shift de 2 bit pour obtenir une adresse en 32 bits
     adr=adr<<2;
 
-    //renvois de l'adresse decoder
+    //renvois de l'adresse decodee
     return adr;
 }
 
@@ -98,16 +98,16 @@ int arm_branch_other_b_bl(arm_core p, uint32_t ins){
 }
 
 int arm_branch_other_mrs (arm_core p, uint32_t ins){
-    //ont recupere le numero du registre destination
+    //on recupere le numero du registre destination
     uint32_t numero_reg=get_bits(ins,15,12);
 
-    //ont verifie que le registre destination n'est pas R15 car il est UNPREDICTABLE
+    //on verifie que le registre destination n'est pas R15 car il est UNPREDICTABLE
     if(numero_reg==15){
         exit(1);
     }
 
-    //si non ont continue le deroulement normal
-    //ont regarde le bit 22 qui nous dit si ont veut copier CPSR ou SPSR
+    //si non on continue le deroulement normal
+    //on regarde le bit 22 qui nous dit si on veut copier CPSR ou SPSR
     if(get_bit(ins,22)==1){
         //test si le mode actuel a bien un registre spcr
         if(arm_current_mode_has_spsr(p)){
