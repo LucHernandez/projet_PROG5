@@ -526,30 +526,31 @@ void test_LDM_STM(arm_core p,uint32_t ins){
     arm_write_register(p,2,4);
     uint8_t i;
     uint8_t RnNum = get_bits(ins,19,16);
+    uint32_t RnVal = arm_read_register(p,RnNum);
     uint32_t valreg;
     uint32_t value;
 
-    for (i=0;i<16;++i){
-        if (get_bit(ins,i)){
-            valreg = arm_read_register(p,i);
-            printf("R%u = %u\n",i,valreg);
-            arm_read_word(p,valreg,&value);
-            printf("Memory[%u] = %u\n",valreg,value);
-        }
-    }
     printf("Rn = R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+    arm_read_word(p,valreg,&value);
+    printf("Memory[%u] = %u\n",RnVal,value);
+    for (i=0;i<16;++i){
+        if (get_bit(ins,i)){
+            valreg = arm_read_register(p,i);
+            printf("R%u = %u\n",i,valreg);
+        }
+    }
+    
 
-    arm_load_store_multiple(p,ins);
+    arm_load_store_multiple(p,ins); 
 
     for (i=0;i<16;++i){
         if (get_bit(ins,i)){
             valreg = arm_read_register(p,i);
             printf("R%u = %u\n",i,valreg);
-            arm_read_word(p,valreg,&value);
-            printf("Memory[%u] = %u\n",valreg,value);
         }
     }
-    printf("\n\n");   
+
+    printf("\n\n");
 }
 
 void instruction_stm(arm_core p){
