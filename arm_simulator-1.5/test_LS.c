@@ -13,15 +13,15 @@
 
 #define TEST_LDR 0
 #define TEST_LDRB 0
-#define TEST_LDRH 0
+#define TEST_LDRH 1
 
-#define TEST_STR 1
-#define TEST_STRB 1
-#define TEST_STRH 1
+#define TEST_STR 0
+#define TEST_STRB 0
+#define TEST_STRH 0
 
 #define TEST_IMMEDIATE 1
 #define TEST_REGISTER 1
-#define TEST_SCALED_REGISTER 1
+#define TEST_SCALED_REGISTER 0
 
 #define TEST_LDM 0
 #define TEST_STM 0
@@ -280,8 +280,9 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins,uint8_t flag_Half){
     arm_write_register(p,0,12);
     arm_write_register(p,1,8);
     arm_write_register(p,2,4);
-
-    Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0);
+    
+    Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,flag_Half);
+    
     arm_write_register(p,0,12);
     arm_write_register(p,1,8);
     arm_write_register(p,2,4);
@@ -358,7 +359,7 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins,uint8_t flag_Half){
         printf("R%u = %u\n",RnNum,arm_read_register(p,RnNum));
         printf("R%u = %u\n",RdNum,arm_read_register(p,RdNum));
 
-                if (flag_Half){
+        if (flag_Half){
             arm_read_half(p,addr,&valueh);
             printf("valeur dans la memoire[%u] avant %u\n\n",addr,valueh);
         }
@@ -456,24 +457,30 @@ void instruction_strh(arm_core p){
     printf("STRH\n");
     if (TEST_IMMEDIATE){
         printf("IMMEDIATE PRE_INDEXED\n");
-        uint32_t ins = 0x01E012F1;
+        uint32_t ins = 0x01E010B0;
+        //0000 0001 1110 0000 0001 0010 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
         printf("IMMEDDIATE OFFSET\n");
-        ins = 0x01C012F1;
+        ins = 0x01C010B0;
+        //0000 0001 1100 0000 0001 0010 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
         printf("IMMEDDIATE POST-INDEXED\n");
-        ins = 0x00C012F1;
+        ins = 0x00C010B0;
+        //0000 0000 1100 0000 0001 0010 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
     }
     if (TEST_REGISTER){
         printf("REGISTER PRE-INDEXED\n");
-        uint32_t ins = 0x01A012F1;
+        uint32_t ins = 0x01A012B1;
+        //0000 0001 1010 0000 0001 0010 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
         printf("REGISTER OFFSET\n");
-        ins = 0x018012F1;
+        ins = 0x018010B1;
+        //0000 0001 1000 0000 0001 0000 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
         printf("REGISTER POST-INDEXED\n");
-        ins = 0x008012F1;
+        ins = 0x008010B1;
+        //0000 0000 1000 0000 0001 0000 1011 0001
         test_LDR_STR_et_plus(p,ins,1);
     }
 }
@@ -481,13 +488,15 @@ void instruction_strh(arm_core p){
 void instruction_ldr(arm_core p){
     printf("LDR\n");
     if (TEST_IMMEDIATE){
-        uint32_t ins = 0x05901003 ;
+        printf("IMM OFFSET\n");
+        uint32_t ins = 0x05901004;
+        //0000 0101 1001 0000 0001 0000 0000 
         test_LDR_STR_et_plus(p,ins,0);
         printf("IMM PRE-INDEXED\n");
-        ins = 0x05B01003 ;
+        ins = 0x05B01004;
         test_LDR_STR_et_plus(p,ins,0);
         printf("IMM POST-INDEXED\n");
-        ins = 0x04901003 ;
+        ins = 0x04901004;
         test_LDR_STR_et_plus(p,ins,0);
     }
     if (TEST_REGISTER){
@@ -554,24 +563,24 @@ void instruction_ldrh(arm_core p){
     printf("LDRH\n");
     if (TEST_IMMEDIATE){
         printf("IMMEDIATE PRE_INDEXED\n");
-        uint32_t ins = 0x01F012F1;
+        uint32_t ins = 0x01F010B4;
         test_LDR_STR_et_plus(p,ins,1);
         printf("IMMEDDIATE OFFSET\n");
-        ins = 0x01D012F1;
+        ins = 0x01D010B4;
         test_LDR_STR_et_plus(p,ins,1);
         printf("IMMEDDIATE POST-INDEXED\n");
-        ins = 0x00D012F1;
+        ins = 0x00D010B4;
         test_LDR_STR_et_plus(p,ins,1);
     }
     if (TEST_REGISTER){
         printf("REGISTER PRE-INDEXED\n");
-        uint32_t ins = 0x01B012F1;
+        uint32_t ins = 0x01B012B1;
         test_LDR_STR_et_plus(p,ins,1);
         printf("REGISTER OFFSET\n");
-        ins = 0x019012F1;
+        ins = 0x019010B1;
         test_LDR_STR_et_plus(p,ins,1);
         printf("REGISTER POST-INDEXED\n");
-        ins = 0x009012F1;
+        ins = 0x009010B1;
         test_LDR_STR_et_plus(p,ins,1);
     }
 }

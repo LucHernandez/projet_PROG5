@@ -173,7 +173,7 @@ int Recup_addresse_WORD_BYTE_HALF(arm_core p,uint32_t ins,uint32_t* addr,int fla
     
     //On verifie si c'est un immediate ou non
 
-    if(bit_i == 0){
+    if((bit_i == 0 && flag_Half == 0)||((bit_i==1) && (flag_Half == 1))){
         uint32_t offset = get_bits(ins,11,0);
         if(flag_Half == 1){
             uint32_t immedH = get_bits(ins,11,8);
@@ -336,7 +336,7 @@ uint32_t Shift_case(arm_core p,uint32_t ins,uint32_t RmVal){
                 break;
             }
         default:
-            printf("peu pas ton b 2 dan");
+            printf("peu pas ton b 2 dan backslashn\n");
             break;
     }
     return index;
@@ -354,7 +354,7 @@ int Number_Of_Set_Bits_In(uint32_t ins){
 int arm_load_store_STR(arm_core p,uint32_t ins){
     uint32_t addr =0;
     uint32_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)!=0){
         return DATA_ABORT;
     }
     if(arm_write_word(p,addr,value)==-1){
@@ -366,7 +366,7 @@ int arm_load_store_STR(arm_core p,uint32_t ins){
 int arm_load_store_STRB(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint8_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,0)!=0){
         return DATA_ABORT;
     }    
     if(arm_write_byte(p,addr,value)==-1){
@@ -378,11 +378,12 @@ int arm_load_store_STRB(arm_core p,uint32_t ins){
 int arm_load_store_STRH(arm_core p,uint32_t ins){
     uint32_t addr = 0;
     uint16_t value = arm_read_register(p,get_bits(ins,15,12));
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,1)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&addr,1)!=0){
         return DATA_ABORT;
     }
     if(get_bit(addr,0)==0){
         if(arm_write_half(p,addr,value)==-1){
+            
             return DATA_ABORT;
         }
         return 0;
@@ -398,7 +399,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
     uint32_t address;
     uint32_t value;
 
-    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)){
+    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)!=0){
         return DATA_ABORT;
     }
 
@@ -420,7 +421,7 @@ int arm_load_store_STM(arm_core p,uint32_t ins){
 int arm_load_store_LDR(arm_core p,uint32_t ins){
     uint32_t address;
 
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)!=0){
         return DATA_ABORT;
     }
 
@@ -443,7 +444,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
     // Rd = Memory[address,1]
     uint32_t address = 0;
 
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,0)!=0){
         return DATA_ABORT;
     }
 
@@ -458,7 +459,7 @@ int arm_load_store_LDRB(arm_core p,uint32_t ins){
 
 int arm_load_store_LDRH(arm_core p,uint32_t ins){
     uint32_t address;
-    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,1)){
+    if(Recup_addresse_WORD_BYTE_HALF(p,ins,&address,1)!=0){
         return DATA_ABORT;
     }
     uint16_t data = 0;
@@ -475,7 +476,7 @@ int arm_load_store_LDM(arm_core p,uint32_t ins){
     uint32_t start_address,end_address;
     uint32_t address;
 
-    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)){
+    if (addr_mode_MULTIPLE(p,ins,&start_address,&end_address)!=0){
         return DATA_ABORT;
     }
 
