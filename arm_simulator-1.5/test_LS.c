@@ -164,7 +164,7 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins){
     arm_write_register(p,0,2);
     arm_write_register(p,1,4);
     arm_write_register(p,2,3);
-    arm_write_word(p,arm_read_register(p,RnNum),8é);
+    arm_write_word(p,arm_read_register(p,RnNum),24);
 
     if (bitL){
         printf("avant lancement de la fonction teste :\n");
