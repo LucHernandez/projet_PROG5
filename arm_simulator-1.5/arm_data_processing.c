@@ -315,7 +315,7 @@ int execute_MOV(arm_core p, uint32_t ins){
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
 	arm_write_register(p, rd, shifter_op);
 
-	return execute_operation(p, ins, (long)arm_read_register(p, rd), rd, (uint8_t)255, shifter_op, carry_out, 3);
+	return execute_operation(p, ins, (long)shifter_op, rd, (uint8_t)255, shifter_op, carry_out, 3);
 }
 
 int execute_MVN(arm_core p, uint32_t ins){
@@ -324,7 +324,7 @@ int execute_MVN(arm_core p, uint32_t ins){
 	uint32_t shifter_op = get_shifter_operand(p, ins, &carry_out);
 	arm_write_register(p, rd, ~shifter_op);
 
-	return execute_operation(p, ins, (long)arm_read_register(p, rd), rd, (uint8_t)255, shifter_op, carry_out, 3);
+	return execute_operation(p, ins, (long)~shifter_op, rd, (uint8_t)255, shifter_op, carry_out, 3);
 }
 
 /***************************************************************************************
