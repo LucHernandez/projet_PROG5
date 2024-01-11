@@ -32,7 +32,7 @@ void test_MRS (arm_core p,uint32_t instruction){
 }
 
 
-void main (){
+int main (){
     printf("initialisation de la machine ...  ");
 
     //initialisation de la memoire 

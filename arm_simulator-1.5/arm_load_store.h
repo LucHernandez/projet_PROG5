@@ -29,11 +29,13 @@ int arm_load_store(arm_core p, uint32_t ins);
 int arm_load_store_multiple(arm_core p, uint32_t ins);
 int arm_coprocessor_load_store(arm_core p, uint32_t ins);
 
-int Shift_case(arm_core p,int Shift,int32_t RmVal,int Shift_imm);
-uint8_t addr_mode_WB(arm_core p,uint32_t ins,uint32_t *addr);
-uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr);
-uint8_t addr_mode_M(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address);
+uint32_t Shift_case(arm_core p,uint32_t ins,uint32_t RmVal);
+uint8_t calcul_adresse(arm_core p,uint32_t ins,int flag_index,int flag_Equivalent,uint32_t* addr,uint32_t value);
+int Recup_addresse_WORD_BYTE_HALF(arm_core p,uint32_t ins,uint32_t* addr,int flag_Half);
+//uint8_t addr_mode_H(arm_core p,uint32_t ins,uint32_t *addr);
+uint8_t addr_mode_MULTIPLE(arm_core p,uint32_t ins,uint32_t *start_address,uint32_t *end_address);
 int Number_Of_Set_Bits_In(uint32_t ins);
+int If_Kevin(arm_core p,uint32_t ins,uint32_t* RmVal,uint8_t* RmNum,uint32_t* index);
 
 
 int arm_load_store_STR(arm_core p,uint32_t ins);
