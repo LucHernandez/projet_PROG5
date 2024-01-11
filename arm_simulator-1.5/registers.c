@@ -151,6 +151,13 @@ uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
     int ligne=get_mode_ligne(mode);  //ligne correspondant au mode
 
+    
+    if(reg > 17){
+        exit(2);
+    }
+    if(reg == 17 && !registers_current_mode_has_spsr(r)){
+        exit(2);
+    }
     //on recupere la valeur du registre
     value=*(r->correspondance_modes[ligne][reg]);
 
@@ -184,6 +191,12 @@ uint32_t registers_read_spsr(registers r, uint8_t mode) {
 void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
     //on recupere la valeur du registre
     int ligne=get_mode_ligne(mode); //ligne corespondant au mode
+    if(reg > 17){
+        exit(2);
+    }
+    if(reg == 17 && !registers_current_mode_has_spsr(r)){
+        exit(2);
+    }
 
     //on change la valeur du registre
     *(r->correspondance_modes[ligne][reg])=value;

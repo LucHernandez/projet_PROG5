@@ -73,7 +73,8 @@ int main() {
     printf("Mode has spsr : ");
     print_test(registers_current_mode_has_spsr(r));
 
-    registers_destroy(r);
+    registers_read(r, 18, registers_get_mode(r)); //test pour voir si lire en dehors du tableau fait buguer
+    registers_write(r, 18, registers_get_mode(r), 0x0); //test pour voir si ecrire en dehors du tableau fait buguer
 
     return 0;
 }
