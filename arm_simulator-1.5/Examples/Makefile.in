@@ -91,7 +91,46 @@ host_triplet = @host@
 @HAVE_ARM_COMPILER_TRUE@noinst_PROGRAMS = example1$(EXEEXT) \
 @HAVE_ARM_COMPILER_TRUE@	example2$(EXEEXT) example3$(EXEEXT) \
 @HAVE_ARM_COMPILER_TRUE@	example4$(EXEEXT) \
-@HAVE_ARM_COMPILER_TRUE@	insertion_sort$(EXEEXT)
+@HAVE_ARM_COMPILER_TRUE@	insertion_sort$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_add_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_add_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_MRS_CPSR$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_MRS_SPSR$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_sub_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_sub_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_vide$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_and_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_and_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_and_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_bic_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_bic_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_bic_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_eor_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_eor_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_eor_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_orr_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_orr_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_orr_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_teq_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_teq_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_teq_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_tst_0$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_tst_1$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_tst_table$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_adc_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_adc_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_cmn_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_cmn_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_cmp_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_cmp_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_mov$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_mvn$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_rsb_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_rsb_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_rsc_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_rsc_registre$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_sbc_entier$(EXEEXT) \
+@HAVE_ARM_COMPILER_TRUE@	example_sbc_registre$(EXEEXT)
 subdir = Examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -115,6 +154,123 @@ example3_LDADD = $(LDADD)
 am_example4_OBJECTS = example4.$(OBJEXT)
 example4_OBJECTS = $(am_example4_OBJECTS)
 example4_LDADD = $(LDADD)
+am_example_MRS_CPSR_OBJECTS = example_MRS_CPSR.$(OBJEXT)
+example_MRS_CPSR_OBJECTS = $(am_example_MRS_CPSR_OBJECTS)
+example_MRS_CPSR_LDADD = $(LDADD)
+am_example_MRS_SPSR_OBJECTS = example_MRS_SPSR.$(OBJEXT)
+example_MRS_SPSR_OBJECTS = $(am_example_MRS_SPSR_OBJECTS)
+example_MRS_SPSR_LDADD = $(LDADD)
+am_example_adc_entier_OBJECTS = example_adc_entier.$(OBJEXT)
+example_adc_entier_OBJECTS = $(am_example_adc_entier_OBJECTS)
+example_adc_entier_LDADD = $(LDADD)
+am_example_adc_registre_OBJECTS = example_adc_registre.$(OBJEXT)
+example_adc_registre_OBJECTS = $(am_example_adc_registre_OBJECTS)
+example_adc_registre_LDADD = $(LDADD)
+am_example_add_entier_OBJECTS = example_add_entier.$(OBJEXT)
+example_add_entier_OBJECTS = $(am_example_add_entier_OBJECTS)
+example_add_entier_LDADD = $(LDADD)
+am_example_add_registre_OBJECTS = example_add_registre.$(OBJEXT)
+example_add_registre_OBJECTS = $(am_example_add_registre_OBJECTS)
+example_add_registre_LDADD = $(LDADD)
+am_example_and_0_OBJECTS = example_and_0.$(OBJEXT)
+example_and_0_OBJECTS = $(am_example_and_0_OBJECTS)
+example_and_0_LDADD = $(LDADD)
+am_example_and_1_OBJECTS = example_and_1.$(OBJEXT)
+example_and_1_OBJECTS = $(am_example_and_1_OBJECTS)
+example_and_1_LDADD = $(LDADD)
+am_example_and_table_OBJECTS = example_and_table.$(OBJEXT)
+example_and_table_OBJECTS = $(am_example_and_table_OBJECTS)
+example_and_table_LDADD = $(LDADD)
+am_example_bic_0_OBJECTS = example_bic_0.$(OBJEXT)
+example_bic_0_OBJECTS = $(am_example_bic_0_OBJECTS)
+example_bic_0_LDADD = $(LDADD)
+am_example_bic_1_OBJECTS = example_bic_1.$(OBJEXT)
+example_bic_1_OBJECTS = $(am_example_bic_1_OBJECTS)
+example_bic_1_LDADD = $(LDADD)
+am_example_bic_table_OBJECTS = example_bic_table.$(OBJEXT)
+example_bic_table_OBJECTS = $(am_example_bic_table_OBJECTS)
+example_bic_table_LDADD = $(LDADD)
+am_example_cmn_entier_OBJECTS = example_cmn_entier.$(OBJEXT)
+example_cmn_entier_OBJECTS = $(am_example_cmn_entier_OBJECTS)
+example_cmn_entier_LDADD = $(LDADD)
+am_example_cmn_registre_OBJECTS = example_cmn_registre.$(OBJEXT)
+example_cmn_registre_OBJECTS = $(am_example_cmn_registre_OBJECTS)
+example_cmn_registre_LDADD = $(LDADD)
+am_example_cmp_entier_OBJECTS = example_cmp_entier.$(OBJEXT)
+example_cmp_entier_OBJECTS = $(am_example_cmp_entier_OBJECTS)
+example_cmp_entier_LDADD = $(LDADD)
+am_example_cmp_registre_OBJECTS = example_cmp_registre.$(OBJEXT)
+example_cmp_registre_OBJECTS = $(am_example_cmp_registre_OBJECTS)
+example_cmp_registre_LDADD = $(LDADD)
+am_example_eor_0_OBJECTS = example_eor_0.$(OBJEXT)
+example_eor_0_OBJECTS = $(am_example_eor_0_OBJECTS)
+example_eor_0_LDADD = $(LDADD)
+am_example_eor_1_OBJECTS = example_eor_1.$(OBJEXT)
+example_eor_1_OBJECTS = $(am_example_eor_1_OBJECTS)
+example_eor_1_LDADD = $(LDADD)
+am_example_eor_table_OBJECTS = example_eor_table.$(OBJEXT)
+example_eor_table_OBJECTS = $(am_example_eor_table_OBJECTS)
+example_eor_table_LDADD = $(LDADD)
+am_example_mov_OBJECTS = example_mov.$(OBJEXT)
+example_mov_OBJECTS = $(am_example_mov_OBJECTS)
+example_mov_LDADD = $(LDADD)
+am_example_mvn_OBJECTS = example_mvn.$(OBJEXT)
+example_mvn_OBJECTS = $(am_example_mvn_OBJECTS)
+example_mvn_LDADD = $(LDADD)
+am_example_orr_0_OBJECTS = example_orr_0.$(OBJEXT)
+example_orr_0_OBJECTS = $(am_example_orr_0_OBJECTS)
+example_orr_0_LDADD = $(LDADD)
+am_example_orr_1_OBJECTS = example_orr_1.$(OBJEXT)
+example_orr_1_OBJECTS = $(am_example_orr_1_OBJECTS)
+example_orr_1_LDADD = $(LDADD)
+am_example_orr_table_OBJECTS = example_orr_table.$(OBJEXT)
+example_orr_table_OBJECTS = $(am_example_orr_table_OBJECTS)
+example_orr_table_LDADD = $(LDADD)
+am_example_rsb_entier_OBJECTS = example_rsb_entier.$(OBJEXT)
+example_rsb_entier_OBJECTS = $(am_example_rsb_entier_OBJECTS)
+example_rsb_entier_LDADD = $(LDADD)
+am_example_rsb_registre_OBJECTS = example_rsb_registre.$(OBJEXT)
+example_rsb_registre_OBJECTS = $(am_example_rsb_registre_OBJECTS)
+example_rsb_registre_LDADD = $(LDADD)
+am_example_rsc_entier_OBJECTS = example_rsc_entier.$(OBJEXT)
+example_rsc_entier_OBJECTS = $(am_example_rsc_entier_OBJECTS)
+example_rsc_entier_LDADD = $(LDADD)
+am_example_rsc_registre_OBJECTS = example_rsc_registre.$(OBJEXT)
+example_rsc_registre_OBJECTS = $(am_example_rsc_registre_OBJECTS)
+example_rsc_registre_LDADD = $(LDADD)
+am_example_sbc_entier_OBJECTS = example_sbc_entier.$(OBJEXT)
+example_sbc_entier_OBJECTS = $(am_example_sbc_entier_OBJECTS)
+example_sbc_entier_LDADD = $(LDADD)
+am_example_sbc_registre_OBJECTS = example_sbc_registre.$(OBJEXT)
+example_sbc_registre_OBJECTS = $(am_example_sbc_registre_OBJECTS)
+example_sbc_registre_LDADD = $(LDADD)
+am_example_sub_entier_OBJECTS = example_sub_entier.$(OBJEXT)
+example_sub_entier_OBJECTS = $(am_example_sub_entier_OBJECTS)
+example_sub_entier_LDADD = $(LDADD)
+am_example_sub_registre_OBJECTS = example_sub_registre.$(OBJEXT)
+example_sub_registre_OBJECTS = $(am_example_sub_registre_OBJECTS)
+example_sub_registre_LDADD = $(LDADD)
+am_example_teq_0_OBJECTS = example_teq_0.$(OBJEXT)
+example_teq_0_OBJECTS = $(am_example_teq_0_OBJECTS)
+example_teq_0_LDADD = $(LDADD)
+am_example_teq_1_OBJECTS = example_teq_1.$(OBJEXT)
+example_teq_1_OBJECTS = $(am_example_teq_1_OBJECTS)
+example_teq_1_LDADD = $(LDADD)
+am_example_teq_table_OBJECTS = example_teq_table.$(OBJEXT)
+example_teq_table_OBJECTS = $(am_example_teq_table_OBJECTS)
+example_teq_table_LDADD = $(LDADD)
+am_example_tst_0_OBJECTS = example_tst_0.$(OBJEXT)
+example_tst_0_OBJECTS = $(am_example_tst_0_OBJECTS)
+example_tst_0_LDADD = $(LDADD)
+am_example_tst_1_OBJECTS = example_tst_1.$(OBJEXT)
+example_tst_1_OBJECTS = $(am_example_tst_1_OBJECTS)
+example_tst_1_LDADD = $(LDADD)
+am_example_tst_table_OBJECTS = example_tst_table.$(OBJEXT)
+example_tst_table_OBJECTS = $(am_example_tst_table_OBJECTS)
+example_tst_table_LDADD = $(LDADD)
+am_example_vide_OBJECTS = example_vide.$(OBJEXT)
+example_vide_OBJECTS = $(am_example_vide_OBJECTS)
+example_vide_LDADD = $(LDADD)
 am_insertion_sort_OBJECTS = insertion_sort.$(OBJEXT) \
 	my_syscalls.$(OBJEXT)
 insertion_sort_OBJECTS = $(am_insertion_sort_OBJECTS)
@@ -154,10 +310,49 @@ am__v_CCAS_ = $(am__v_CCAS_@AM_DEFAULT_V@)
 am__v_CCAS_0 = @echo "  CCAS    " $@;
 am__v_CCAS_1 = 
 SOURCES = $(example1_SOURCES) $(example2_SOURCES) $(example3_SOURCES) \
-	$(example4_SOURCES) $(insertion_sort_SOURCES)
+	$(example4_SOURCES) $(example_MRS_CPSR_SOURCES) \
+	$(example_MRS_SPSR_SOURCES) $(example_adc_entier_SOURCES) \
+	$(example_adc_registre_SOURCES) $(example_add_entier_SOURCES) \
+	$(example_add_registre_SOURCES) $(example_and_0_SOURCES) \
+	$(example_and_1_SOURCES) $(example_and_table_SOURCES) \
+	$(example_bic_0_SOURCES) $(example_bic_1_SOURCES) \
+	$(example_bic_table_SOURCES) $(example_cmn_entier_SOURCES) \
+	$(example_cmn_registre_SOURCES) $(example_cmp_entier_SOURCES) \
+	$(example_cmp_registre_SOURCES) $(example_eor_0_SOURCES) \
+	$(example_eor_1_SOURCES) $(example_eor_table_SOURCES) \
+	$(example_mov_SOURCES) $(example_mvn_SOURCES) \
+	$(example_orr_0_SOURCES) $(example_orr_1_SOURCES) \
+	$(example_orr_table_SOURCES) $(example_rsb_entier_SOURCES) \
+	$(example_rsb_registre_SOURCES) $(example_rsc_entier_SOURCES) \
+	$(example_rsc_registre_SOURCES) $(example_sbc_entier_SOURCES) \
+	$(example_sbc_registre_SOURCES) $(example_sub_entier_SOURCES) \
+	$(example_sub_registre_SOURCES) $(example_teq_0_SOURCES) \
+	$(example_teq_1_SOURCES) $(example_teq_table_SOURCES) \
+	$(example_tst_0_SOURCES) $(example_tst_1_SOURCES) \
+	$(example_tst_table_SOURCES) $(example_vide_SOURCES) \
+	$(insertion_sort_SOURCES)
 DIST_SOURCES = $(example1_SOURCES) $(example2_SOURCES) \
 	$(example3_SOURCES) $(example4_SOURCES) \
-	$(insertion_sort_SOURCES)
+	$(example_MRS_CPSR_SOURCES) $(example_MRS_SPSR_SOURCES) \
+	$(example_adc_entier_SOURCES) $(example_adc_registre_SOURCES) \
+	$(example_add_entier_SOURCES) $(example_add_registre_SOURCES) \
+	$(example_and_0_SOURCES) $(example_and_1_SOURCES) \
+	$(example_and_table_SOURCES) $(example_bic_0_SOURCES) \
+	$(example_bic_1_SOURCES) $(example_bic_table_SOURCES) \
+	$(example_cmn_entier_SOURCES) $(example_cmn_registre_SOURCES) \
+	$(example_cmp_entier_SOURCES) $(example_cmp_registre_SOURCES) \
+	$(example_eor_0_SOURCES) $(example_eor_1_SOURCES) \
+	$(example_eor_table_SOURCES) $(example_mov_SOURCES) \
+	$(example_mvn_SOURCES) $(example_orr_0_SOURCES) \
+	$(example_orr_1_SOURCES) $(example_orr_table_SOURCES) \
+	$(example_rsb_entier_SOURCES) $(example_rsb_registre_SOURCES) \
+	$(example_rsc_entier_SOURCES) $(example_rsc_registre_SOURCES) \
+	$(example_sbc_entier_SOURCES) $(example_sbc_registre_SOURCES) \
+	$(example_sub_entier_SOURCES) $(example_sub_registre_SOURCES) \
+	$(example_teq_0_SOURCES) $(example_teq_1_SOURCES) \
+	$(example_teq_table_SOURCES) $(example_tst_0_SOURCES) \
+	$(example_tst_1_SOURCES) $(example_tst_table_SOURCES) \
+	$(example_vide_SOURCES) $(insertion_sort_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -306,6 +501,45 @@ example2_SOURCES = example2.s
 example3_SOURCES = example3.s
 example4_SOURCES = example4.s
 insertion_sort_SOURCES = insertion_sort.c my_syscalls.s my_syscalls.h
+example_add_entier_SOURCES = example_add_entier.s
+example_add_registre_SOURCES = example_add_registre.s
+example_MRS_CPSR_SOURCES = example_MRS_CPSR.s
+example_MRS_SPSR_SOURCES = example_MRS_SPSR.s
+example_sub_entier_SOURCES = example_sub_entier.s
+example_sub_registre_SOURCES = example_sub_registre.s
+example_vide_SOURCES = example_vide.s
+example_and_0_SOURCES = example_and_0.s
+example_and_1_SOURCES = example_and_1.s
+example_and_table_SOURCES = example_and_table.s
+example_bic_0_SOURCES = example_bic_0.s
+example_bic_1_SOURCES = example_bic_1.s
+example_bic_table_SOURCES = example_bic_table.s
+example_eor_0_SOURCES = example_eor_0.s
+example_eor_1_SOURCES = example_eor_1.s
+example_eor_table_SOURCES = example_eor_table.s
+example_orr_0_SOURCES = example_orr_0.s
+example_orr_1_SOURCES = example_orr_1.s
+example_orr_table_SOURCES = example_orr_table.s
+example_teq_0_SOURCES = example_teq_0.s
+example_teq_1_SOURCES = example_teq_1.s
+example_teq_table_SOURCES = example_teq_table.s
+example_tst_0_SOURCES = example_tst_0.s
+example_tst_1_SOURCES = example_tst_1.s
+example_tst_table_SOURCES = example_tst_table.s
+example_adc_entier_SOURCES = example_adc_entier.s
+example_adc_registre_SOURCES = example_adc_registre.s
+example_cmn_entier_SOURCES = example_cmn_entier.s
+example_cmn_registre_SOURCES = example_cmn_registre.s
+example_cmp_entier_SOURCES = example_cmp_entier.s
+example_cmp_registre_SOURCES = example_cmp_registre.s
+example_mov_SOURCES = example_mov.s
+example_mvn_SOURCES = example_mvn.s
+example_rsb_entier_SOURCES = example_rsb_entier.s
+example_rsb_registre_SOURCES = example_rsb_registre.s
+example_rsc_entier_SOURCES = example_rsc_entier.s
+example_rsc_registre_SOURCES = example_rsc_registre.s
+example_sbc_entier_SOURCES = example_sbc_entier.s
+example_sbc_registre_SOURCES = example_sbc_registre.s
 EXTRA_DIST = linker_script
 all: all-am
 
@@ -359,6 +593,162 @@ example3$(EXEEXT): $(example3_OBJECTS) $(example3_DEPENDENCIES) $(EXTRA_example3
 example4$(EXEEXT): $(example4_OBJECTS) $(example4_DEPENDENCIES) $(EXTRA_example4_DEPENDENCIES) 
 	@rm -f example4$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example4_OBJECTS) $(example4_LDADD) $(LIBS)
+
+example_MRS_CPSR$(EXEEXT): $(example_MRS_CPSR_OBJECTS) $(example_MRS_CPSR_DEPENDENCIES) $(EXTRA_example_MRS_CPSR_DEPENDENCIES) 
+	@rm -f example_MRS_CPSR$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_MRS_CPSR_OBJECTS) $(example_MRS_CPSR_LDADD) $(LIBS)
+
+example_MRS_SPSR$(EXEEXT): $(example_MRS_SPSR_OBJECTS) $(example_MRS_SPSR_DEPENDENCIES) $(EXTRA_example_MRS_SPSR_DEPENDENCIES) 
+	@rm -f example_MRS_SPSR$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_MRS_SPSR_OBJECTS) $(example_MRS_SPSR_LDADD) $(LIBS)
+
+example_adc_entier$(EXEEXT): $(example_adc_entier_OBJECTS) $(example_adc_entier_DEPENDENCIES) $(EXTRA_example_adc_entier_DEPENDENCIES) 
+	@rm -f example_adc_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_adc_entier_OBJECTS) $(example_adc_entier_LDADD) $(LIBS)
+
+example_adc_registre$(EXEEXT): $(example_adc_registre_OBJECTS) $(example_adc_registre_DEPENDENCIES) $(EXTRA_example_adc_registre_DEPENDENCIES) 
+	@rm -f example_adc_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_adc_registre_OBJECTS) $(example_adc_registre_LDADD) $(LIBS)
+
+example_add_entier$(EXEEXT): $(example_add_entier_OBJECTS) $(example_add_entier_DEPENDENCIES) $(EXTRA_example_add_entier_DEPENDENCIES) 
+	@rm -f example_add_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_add_entier_OBJECTS) $(example_add_entier_LDADD) $(LIBS)
+
+example_add_registre$(EXEEXT): $(example_add_registre_OBJECTS) $(example_add_registre_DEPENDENCIES) $(EXTRA_example_add_registre_DEPENDENCIES) 
+	@rm -f example_add_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_add_registre_OBJECTS) $(example_add_registre_LDADD) $(LIBS)
+
+example_and_0$(EXEEXT): $(example_and_0_OBJECTS) $(example_and_0_DEPENDENCIES) $(EXTRA_example_and_0_DEPENDENCIES) 
+	@rm -f example_and_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_and_0_OBJECTS) $(example_and_0_LDADD) $(LIBS)
+
+example_and_1$(EXEEXT): $(example_and_1_OBJECTS) $(example_and_1_DEPENDENCIES) $(EXTRA_example_and_1_DEPENDENCIES) 
+	@rm -f example_and_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_and_1_OBJECTS) $(example_and_1_LDADD) $(LIBS)
+
+example_and_table$(EXEEXT): $(example_and_table_OBJECTS) $(example_and_table_DEPENDENCIES) $(EXTRA_example_and_table_DEPENDENCIES) 
+	@rm -f example_and_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_and_table_OBJECTS) $(example_and_table_LDADD) $(LIBS)
+
+example_bic_0$(EXEEXT): $(example_bic_0_OBJECTS) $(example_bic_0_DEPENDENCIES) $(EXTRA_example_bic_0_DEPENDENCIES) 
+	@rm -f example_bic_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_bic_0_OBJECTS) $(example_bic_0_LDADD) $(LIBS)
+
+example_bic_1$(EXEEXT): $(example_bic_1_OBJECTS) $(example_bic_1_DEPENDENCIES) $(EXTRA_example_bic_1_DEPENDENCIES) 
+	@rm -f example_bic_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_bic_1_OBJECTS) $(example_bic_1_LDADD) $(LIBS)
+
+example_bic_table$(EXEEXT): $(example_bic_table_OBJECTS) $(example_bic_table_DEPENDENCIES) $(EXTRA_example_bic_table_DEPENDENCIES) 
+	@rm -f example_bic_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_bic_table_OBJECTS) $(example_bic_table_LDADD) $(LIBS)
+
+example_cmn_entier$(EXEEXT): $(example_cmn_entier_OBJECTS) $(example_cmn_entier_DEPENDENCIES) $(EXTRA_example_cmn_entier_DEPENDENCIES) 
+	@rm -f example_cmn_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_cmn_entier_OBJECTS) $(example_cmn_entier_LDADD) $(LIBS)
+
+example_cmn_registre$(EXEEXT): $(example_cmn_registre_OBJECTS) $(example_cmn_registre_DEPENDENCIES) $(EXTRA_example_cmn_registre_DEPENDENCIES) 
+	@rm -f example_cmn_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_cmn_registre_OBJECTS) $(example_cmn_registre_LDADD) $(LIBS)
+
+example_cmp_entier$(EXEEXT): $(example_cmp_entier_OBJECTS) $(example_cmp_entier_DEPENDENCIES) $(EXTRA_example_cmp_entier_DEPENDENCIES) 
+	@rm -f example_cmp_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_cmp_entier_OBJECTS) $(example_cmp_entier_LDADD) $(LIBS)
+
+example_cmp_registre$(EXEEXT): $(example_cmp_registre_OBJECTS) $(example_cmp_registre_DEPENDENCIES) $(EXTRA_example_cmp_registre_DEPENDENCIES) 
+	@rm -f example_cmp_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_cmp_registre_OBJECTS) $(example_cmp_registre_LDADD) $(LIBS)
+
+example_eor_0$(EXEEXT): $(example_eor_0_OBJECTS) $(example_eor_0_DEPENDENCIES) $(EXTRA_example_eor_0_DEPENDENCIES) 
+	@rm -f example_eor_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_eor_0_OBJECTS) $(example_eor_0_LDADD) $(LIBS)
+
+example_eor_1$(EXEEXT): $(example_eor_1_OBJECTS) $(example_eor_1_DEPENDENCIES) $(EXTRA_example_eor_1_DEPENDENCIES) 
+	@rm -f example_eor_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_eor_1_OBJECTS) $(example_eor_1_LDADD) $(LIBS)
+
+example_eor_table$(EXEEXT): $(example_eor_table_OBJECTS) $(example_eor_table_DEPENDENCIES) $(EXTRA_example_eor_table_DEPENDENCIES) 
+	@rm -f example_eor_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_eor_table_OBJECTS) $(example_eor_table_LDADD) $(LIBS)
+
+example_mov$(EXEEXT): $(example_mov_OBJECTS) $(example_mov_DEPENDENCIES) $(EXTRA_example_mov_DEPENDENCIES) 
+	@rm -f example_mov$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_mov_OBJECTS) $(example_mov_LDADD) $(LIBS)
+
+example_mvn$(EXEEXT): $(example_mvn_OBJECTS) $(example_mvn_DEPENDENCIES) $(EXTRA_example_mvn_DEPENDENCIES) 
+	@rm -f example_mvn$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_mvn_OBJECTS) $(example_mvn_LDADD) $(LIBS)
+
+example_orr_0$(EXEEXT): $(example_orr_0_OBJECTS) $(example_orr_0_DEPENDENCIES) $(EXTRA_example_orr_0_DEPENDENCIES) 
+	@rm -f example_orr_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_orr_0_OBJECTS) $(example_orr_0_LDADD) $(LIBS)
+
+example_orr_1$(EXEEXT): $(example_orr_1_OBJECTS) $(example_orr_1_DEPENDENCIES) $(EXTRA_example_orr_1_DEPENDENCIES) 
+	@rm -f example_orr_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_orr_1_OBJECTS) $(example_orr_1_LDADD) $(LIBS)
+
+example_orr_table$(EXEEXT): $(example_orr_table_OBJECTS) $(example_orr_table_DEPENDENCIES) $(EXTRA_example_orr_table_DEPENDENCIES) 
+	@rm -f example_orr_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_orr_table_OBJECTS) $(example_orr_table_LDADD) $(LIBS)
+
+example_rsb_entier$(EXEEXT): $(example_rsb_entier_OBJECTS) $(example_rsb_entier_DEPENDENCIES) $(EXTRA_example_rsb_entier_DEPENDENCIES) 
+	@rm -f example_rsb_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_rsb_entier_OBJECTS) $(example_rsb_entier_LDADD) $(LIBS)
+
+example_rsb_registre$(EXEEXT): $(example_rsb_registre_OBJECTS) $(example_rsb_registre_DEPENDENCIES) $(EXTRA_example_rsb_registre_DEPENDENCIES) 
+	@rm -f example_rsb_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_rsb_registre_OBJECTS) $(example_rsb_registre_LDADD) $(LIBS)
+
+example_rsc_entier$(EXEEXT): $(example_rsc_entier_OBJECTS) $(example_rsc_entier_DEPENDENCIES) $(EXTRA_example_rsc_entier_DEPENDENCIES) 
+	@rm -f example_rsc_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_rsc_entier_OBJECTS) $(example_rsc_entier_LDADD) $(LIBS)
+
+example_rsc_registre$(EXEEXT): $(example_rsc_registre_OBJECTS) $(example_rsc_registre_DEPENDENCIES) $(EXTRA_example_rsc_registre_DEPENDENCIES) 
+	@rm -f example_rsc_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_rsc_registre_OBJECTS) $(example_rsc_registre_LDADD) $(LIBS)
+
+example_sbc_entier$(EXEEXT): $(example_sbc_entier_OBJECTS) $(example_sbc_entier_DEPENDENCIES) $(EXTRA_example_sbc_entier_DEPENDENCIES) 
+	@rm -f example_sbc_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_sbc_entier_OBJECTS) $(example_sbc_entier_LDADD) $(LIBS)
+
+example_sbc_registre$(EXEEXT): $(example_sbc_registre_OBJECTS) $(example_sbc_registre_DEPENDENCIES) $(EXTRA_example_sbc_registre_DEPENDENCIES) 
+	@rm -f example_sbc_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_sbc_registre_OBJECTS) $(example_sbc_registre_LDADD) $(LIBS)
+
+example_sub_entier$(EXEEXT): $(example_sub_entier_OBJECTS) $(example_sub_entier_DEPENDENCIES) $(EXTRA_example_sub_entier_DEPENDENCIES) 
+	@rm -f example_sub_entier$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_sub_entier_OBJECTS) $(example_sub_entier_LDADD) $(LIBS)
+
+example_sub_registre$(EXEEXT): $(example_sub_registre_OBJECTS) $(example_sub_registre_DEPENDENCIES) $(EXTRA_example_sub_registre_DEPENDENCIES) 
+	@rm -f example_sub_registre$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_sub_registre_OBJECTS) $(example_sub_registre_LDADD) $(LIBS)
+
+example_teq_0$(EXEEXT): $(example_teq_0_OBJECTS) $(example_teq_0_DEPENDENCIES) $(EXTRA_example_teq_0_DEPENDENCIES) 
+	@rm -f example_teq_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_teq_0_OBJECTS) $(example_teq_0_LDADD) $(LIBS)
+
+example_teq_1$(EXEEXT): $(example_teq_1_OBJECTS) $(example_teq_1_DEPENDENCIES) $(EXTRA_example_teq_1_DEPENDENCIES) 
+	@rm -f example_teq_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_teq_1_OBJECTS) $(example_teq_1_LDADD) $(LIBS)
+
+example_teq_table$(EXEEXT): $(example_teq_table_OBJECTS) $(example_teq_table_DEPENDENCIES) $(EXTRA_example_teq_table_DEPENDENCIES) 
+	@rm -f example_teq_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_teq_table_OBJECTS) $(example_teq_table_LDADD) $(LIBS)
+
+example_tst_0$(EXEEXT): $(example_tst_0_OBJECTS) $(example_tst_0_DEPENDENCIES) $(EXTRA_example_tst_0_DEPENDENCIES) 
+	@rm -f example_tst_0$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_tst_0_OBJECTS) $(example_tst_0_LDADD) $(LIBS)
+
+example_tst_1$(EXEEXT): $(example_tst_1_OBJECTS) $(example_tst_1_DEPENDENCIES) $(EXTRA_example_tst_1_DEPENDENCIES) 
+	@rm -f example_tst_1$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_tst_1_OBJECTS) $(example_tst_1_LDADD) $(LIBS)
+
+example_tst_table$(EXEEXT): $(example_tst_table_OBJECTS) $(example_tst_table_DEPENDENCIES) $(EXTRA_example_tst_table_DEPENDENCIES) 
+	@rm -f example_tst_table$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_tst_table_OBJECTS) $(example_tst_table_LDADD) $(LIBS)
+
+example_vide$(EXEEXT): $(example_vide_OBJECTS) $(example_vide_DEPENDENCIES) $(EXTRA_example_vide_DEPENDENCIES) 
+	@rm -f example_vide$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_vide_OBJECTS) $(example_vide_LDADD) $(LIBS)
 
 insertion_sort$(EXEEXT): $(insertion_sort_OBJECTS) $(insertion_sort_DEPENDENCIES) $(EXTRA_insertion_sort_DEPENDENCIES) 
 	@rm -f insertion_sort$(EXEEXT)
