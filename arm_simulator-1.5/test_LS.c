@@ -12,8 +12,8 @@
 #define ADDRESS_MODE_H 0
 
 #define TEST_LDR 0
-#define TEST_LDRB 0
-#define TEST_LDRH 1
+#define TEST_LDRB 1
+#define TEST_LDRH 0
 
 #define TEST_STR 0
 #define TEST_STRB 0
@@ -21,7 +21,7 @@
 
 #define TEST_IMMEDIATE 1
 #define TEST_REGISTER 1
-#define TEST_SCALED_REGISTER 0
+#define TEST_SCALED_REGISTER 1
 
 #define TEST_LDM 0
 #define TEST_STM 0
@@ -320,16 +320,16 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins,uint8_t flag_Half){
         
         if (flag_Half){
             arm_read_half(p,addr,&valueh);
-            printf("valeur dans la memoire[%u] avant %u\n\n",addr,valueh);
+            printf("valeur dans la memoire[%u] apres %u\n\n",addr,valueh);
         }
         else{
             if (bitB) {
                 arm_read_byte(p,addr,&valueb);
-                printf("valeur dans la memoire[%u] avant %u\n\n",addr,valueb);
+                printf("valeur dans la memoire[%u] apres %u\n\n",addr,valueb);
                 }
             else {
                 arm_read_word(p,addr,&value);
-                printf("valeur dans la memoire[%u] avant %u\n\n",addr,value);
+                printf("valeur dans la memoire[%u] apres %u\n\n",addr,value);
             }
         }
     }
@@ -375,7 +375,7 @@ void test_LDR_STR_et_plus(arm_core p,uint32_t ins,uint8_t flag_Half){
         }
     }
     printf("\n\n");
-    }
+}
 
 
 void instruction_str(arm_core p){
@@ -419,6 +419,7 @@ void instruction_str(arm_core p){
 void instruction_strb(arm_core p){
     printf("STRB\n");
     if (TEST_IMMEDIATE){
+        printf("IMM OFFSET");
         uint32_t ins = 0x05C01003 ;
         test_LDR_STR_et_plus(p,ins,0);
         printf("IMM PRE-INDEXED\n");
@@ -606,7 +607,7 @@ void test_LDM_STM(arm_core p,uint32_t ins){
     arm_write_register(p,0,12);
     arm_write_register(p,1,8);
     arm_write_register(p,2,4);
-
+    printf("valeur avant la fonction\n");
     for (i=0;i<16;++i){
         if (get_bit(ins,i)){
             valreg = arm_read_register(p,i);
@@ -616,10 +617,11 @@ void test_LDM_STM(arm_core p,uint32_t ins){
             addr+=4;
         }
     }
-    printf("Rn = R%u = %u\n",RnNum,arm_read_register(p,RnNum));
+    printf("Rn = R%u = %u\n\n",RnNum,arm_read_register(p,RnNum));
 
     arm_load_store_multiple(p,ins);
 
+    printf("valeur apres la fonction\n");
     for (i=0;i<16;++i){
         if (get_bit(ins,i)){
             valreg = arm_read_register(p,i);
@@ -635,30 +637,38 @@ void test_LDM_STM(arm_core p,uint32_t ins){
 void instruction_stm(arm_core p){
     printf("STM\n");
     if (TEST_INCREMENT_AFTER){
-        printf("Increment After");
+        printf("Increment After w = 0\n");
         uint32_t ins = 0x08800004; //W = 0
         test_LDM_STM(p,ins);
+
+        printf("Increment After w = 1\n");
         ins = 0x08A00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_INCREMENT_BEFORE){
-        printf("Increment Before");
+        printf("Increment Before w = 0\n");
         uint32_t ins = 0x09800004;           //W = 0
         test_LDM_STM(p,ins);
+        
+        printf("Increment Before w = 1\n");
         ins = 0x09A00004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_AFTER){
-        printf("Decrement After");
+        printf("Decrement After w = 0\n");
         uint32_t ins = 0x08000004;          //W = 0
         test_LDM_STM(p,ins);
+
+        printf("Decrement After w = 1\n");
         ins = 0x08200004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_BEFORE){
-        printf("Decrement Before");
+        printf("Decrement Before w = 0\n");
         uint32_t ins = 0x09000004;          //W = 0
         test_LDM_STM(p,ins);
+
+        printf("Decrement Before w = 1\n");
         ins = 0x09200004;          //W = 1
         test_LDM_STM(p,ins);
     }
@@ -667,30 +677,37 @@ void instruction_stm(arm_core p){
 void instruction_ldm(arm_core p){
     printf("LDM\n");
     if (TEST_INCREMENT_AFTER){
-        printf("Increment After");
+        printf("Increment After w = 0\n");
         uint32_t ins = 0x08900004; //W = 0
         test_LDM_STM(p,ins);
+
         ins = 0x08B00004;          //W = 1
+        printf("Increment After w = 1\n");
         test_LDM_STM(p,ins);
     }
     if (TEST_INCREMENT_BEFORE){
-        printf("Increment Before");
+        printf("Increment Before w = 0\n");
         uint32_t ins = 0x09900004;           //W = 0
         test_LDM_STM(p,ins);
+
         ins = 0x09B00004;          //W = 1
+        printf("Increment Before w = 1\n");
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_AFTER){
-        printf("Decrement After");
+        printf("Decrement After w = 0\n");
         uint32_t ins = 0x08100004;          //W = 0
         test_LDM_STM(p,ins);
+
+        printf("Decrement After w = 1\n");
         ins = 0x08300004;          //W = 1
         test_LDM_STM(p,ins);
     }
     if (TEST_DECREMENT_BEFORE){
-        printf("Decrement Before");
+        printf("Decrement Before w = 0\n");
         uint32_t ins = 0x09100004;          //W = 0
         test_LDM_STM(p,ins);
+        printf("Decrement Before w = 1\n");
         ins = 0x09300004;          //W = 1
         test_LDM_STM(p,ins);
     }
@@ -716,6 +733,20 @@ int main(){
 
     if (TEST_LDM) instruction_ldm(p);
     if (TEST_STM) instruction_stm(p);
+
+    uint32_t value;
+
+    // arm_write_register(p,0,0x12345678);
+    // arm_write_register(p,1,0x2000);
+
+
+    // arm_load_store(p,0xE5810000);
+    // arm_read_word(p,0x2000,&value);
+    // printf("%x\n",value);
+    // arm_load_store(p,0xE5D12000);
+    
+    // printf("%x\n",arm_read_register(p,1));
+
 
     registers_destroy(reg);
     memory_destroy(mem);
