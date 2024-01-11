@@ -86,7 +86,7 @@ int arm_branch_other_b_bl(arm_core p, uint32_t ins){
     //test si le bit L (bit 24) est a un 
     if (get_bit(ins,24)==1){
         //stock l'adresse de PC dans le registre 14 aussi nomee LR
-        arm_write_register(p,14,arm_read_register(p,15));
+        arm_write_register(p,14,arm_read_register(p,15)-4);
     }
 
     //decode le saut pour la suite des instruction a executer
