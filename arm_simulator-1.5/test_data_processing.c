@@ -27,59 +27,59 @@ uint8_t tester (uint32_t val1, uint32_t val2, enum data_processing_operation op,
     switch (op) {
         case AND:
             expected_flags |= former_carry;
-            execute_AND(p, instruction_guide);
+            arm_data_processing_AND(p, instruction_guide);
             break;
         case EOR:
             expected_flags |= former_carry;
-            execute_EOR(p, instruction_guide);
+            arm_data_processing_EOR(p, instruction_guide);
             break;
         case TST:
             expected_flags |= former_carry;
-            execute_TST(p, instruction_guide);
+            arm_data_processing_TST(p, instruction_guide);
             break;
         case TEQ:
             expected_flags |= former_carry;
-            execute_TEQ(p, instruction_guide);
+            arm_data_processing_TEQ(p, instruction_guide);
             break;
         case CMP:
-            execute_CMP(p, instruction_guide);
+            arm_data_processing_CMP(p, instruction_guide);
             break;
         case CMN:
-            execute_CMN(p, instruction_guide);
+            arm_data_processing_CMN(p, instruction_guide);
             break;
         case ORR:
             expected_flags |= former_carry;
-            execute_ORR(p, instruction_guide);
+            arm_data_processing_ORR(p, instruction_guide);
             break;
         case BIC:
             expected_flags |= former_carry;
-            execute_BIC(p, instruction_guide);
+            arm_data_processing_BIC(p, instruction_guide);
             break;
         case SUB:
-            execute_SUB(p, instruction_guide);
+            arm_data_processing_SUB(p, instruction_guide);
             break;
         case RSB:
-            execute_RSB(p, instruction_guide);
+            arm_data_processing_RSB(p, instruction_guide);
             break;
         case ADD:
-            execute_ADD(p, instruction_guide);
+            arm_data_processing_ADD(p, instruction_guide);
             break;
         case ADC:
-            execute_ADC(p, instruction_guide);
+            arm_data_processing_ADC(p, instruction_guide);
             break;
         case SBC:
-            execute_SBC(p, instruction_guide);
+            arm_data_processing_SBC(p, instruction_guide);
             break;
         case RSC:
-            execute_RSC(p, instruction_guide);
+            arm_data_processing_RSC(p, instruction_guide);
             break;
         case MOV:
             expected_flags |= former_carry;
-            execute_MOV(p, instruction_guide);
+            arm_data_processing_MOV(p, instruction_guide);
             break;
         case MVN:
             expected_flags |= former_carry;
-            execute_MVN(p, instruction_guide);
+            arm_data_processing_MVN(p, instruction_guide);
             break;
     }
     uint8_t correct_results = 0;

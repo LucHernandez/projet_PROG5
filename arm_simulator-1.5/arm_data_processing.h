@@ -31,30 +31,30 @@ int execute_operation(arm_core p, uint32_t ins, long res, uint8_t rd, uint32_t r
 /**************************
 SECTION OPERATIONS LOGIQUES
 **************************/
-int execute_AND(arm_core p, uint32_t ins);
-int execute_EOR(arm_core p, uint32_t ins);
-int execute_TST(arm_core p, uint32_t ins);
-int execute_TEQ(arm_core p, uint32_t ins);
-int execute_ORR(arm_core p, uint32_t ins);
-int execute_BIC(arm_core p, uint32_t ins);
-int execute_MOV(arm_core p, uint32_t ins);
-int execute_MVN(arm_core p, uint32_t ins);
+int arm_data_processing_AND(arm_core p, uint32_t ins);
+int arm_data_processing_EOR(arm_core p, uint32_t ins);
+int arm_data_processing_TST(arm_core p, uint32_t ins);
+int arm_data_processing_TEQ(arm_core p, uint32_t ins);
+int arm_data_processing_ORR(arm_core p, uint32_t ins);
+int arm_data_processing_BIC(arm_core p, uint32_t ins);
+int arm_data_processing_MOV(arm_core p, uint32_t ins);
+int arm_data_processing_MVN(arm_core p, uint32_t ins);
 
 /*******************************
 SECTION OPERATIONS ADDITIVES
 ********************************/
-int execute_ADD(arm_core p, uint32_t ins);
-int execute_ADC(arm_core p, uint32_t ins);
-int execute_CMN(arm_core p, uint32_t ins);
+int arm_data_processing_ADD(arm_core p, uint32_t ins);
+int arm_data_processing_ADC(arm_core p, uint32_t ins);
+int arm_data_processing_CMN(arm_core p, uint32_t ins);
 
 /*******************************
 SECTION OPERATIONS SUBSTRACTIVES
 ********************************/
-int execute_SUB(arm_core p, uint32_t ins);
-int execute_RSB(arm_core p, uint32_t ins);
-int execute_SBC(arm_core p, uint32_t ins);
-int execute_RSC(arm_core p, uint32_t ins);
-int execute_CMP(arm_core p, uint32_t ins);
+int arm_data_processing_SUB(arm_core p, uint32_t ins);
+int arm_data_processing_RSB(arm_core p, uint32_t ins);
+int arm_data_processing_SBC(arm_core p, uint32_t ins);
+int arm_data_processing_RSC(arm_core p, uint32_t ins);
+int arm_data_processing_CMP(arm_core p, uint32_t ins);
 
 
 uint32_t get_shifter_operand(arm_core p, uint32_t instruction, uint8_t *carry_out);
